@@ -16,7 +16,6 @@ export const HoverEffect = ({
   className?: string
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-
   return (
     <div className={cn('flex flex-wrap items-center justify-center gap-8 py-10 w-full', className)}>
       {items.map((item, idx) => {
@@ -72,7 +71,7 @@ export const Card = ({
     <div
       style={style}
       className={cn(
-        'rounded-2xl h-full w-full p-4 overflow-hidden border border-transparent dark:border-white/[0.2] group-hover:border-slate-700 relative z-20',
+        'rounded-2xl h-full w-full p-4 overflow-hidden border border-transparent dark:border-white/[0.2] group-hover:border-slate-700 relative z-20 hover:scale-101 hover:rotate-3 transition-all duration-300 ease-in-out',
         className,
       )}
     >

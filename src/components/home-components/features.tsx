@@ -2,7 +2,7 @@ import { HoverEffect } from '../ui/card-hover-effect'
 
 export function Features() {
   return (
-    <div className="mx-auto md:px-8">
+    <div className="mx-auto md:px-8 bg-radial from-gray-300 to-amber-100">
       <HoverEffect items={projects} />
     </div>
   )

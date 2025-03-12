@@ -52,7 +52,7 @@ const NavigationMenu = () => {
   ]
 
   const rightMenuItems = [
-    { label: 'About me', href: '/about' },
+    { label: 'Meet Leso', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ]
 

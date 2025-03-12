@@ -15,7 +15,7 @@ export const Footer = () => {
               <Logo height={38} src="/logo.png" />
             </Link>
             <p className="text-sm text-gray-400">
-              Discover unique art collections and connect with the artist.
+              Discover my unique art collections and connect with the me.
             </p>
           </div>
 

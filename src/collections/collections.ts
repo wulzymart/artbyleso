@@ -4,7 +4,7 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { slugField } from '@/fields/slug'
 
-export const collections: CollectionConfig = {
+export const Collections: CollectionConfig = {
   slug: 'collections',
   access: {
     create: authenticated,

@@ -12,7 +12,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { collections } from './collections/collections'
+import { Collections } from './collections/collections'
 import { Artworks } from './collections/Artworks'
 
 const filename = fileURLToPath(import.meta.url)
@@ -60,7 +60,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [collections, Artworks, Media, Users],
+  collections: [Collections, Artworks, Media, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
