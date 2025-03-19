@@ -16,6 +16,7 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import NavigationMenu from '@/components/header/nav_menu'
+import { Toaster } from '@/components/ui/sonner'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
           <div className="relative z-10">{children}</div>
           <Footer />
+          <Toaster />
         </Providers>
       </body>
     </html>

@@ -11,3 +11,10 @@ export const authenticatedOrPublished: Access = ({ req: { user } }) => {
     },
   }
 }
+export const authenticated: Access = () => {
+  return {
+    _status: {
+      equals: 'published',
+    },
+  }
+}

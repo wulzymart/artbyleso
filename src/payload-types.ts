@@ -63,6 +63,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    customers: CustomerAuthOperations;
   };
   blocks: {};
   collections: {
@@ -70,6 +71,8 @@ export interface Config {
     artworks: Artwork;
     media: Media;
     users: User;
+    carts: Cart;
+    customers: Customer;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
@@ -78,12 +81,18 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    collections: {
+      artworks: 'artworks';
+    };
+  };
   collectionsSelect: {
     collections: CollectionsSelect<false> | CollectionsSelect<true>;
     artworks: ArtworksSelect<false> | ArtworksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -104,9 +113,13 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user:
+    | (User & {
+        collection: 'users';
+      })
+    | (Customer & {
+        collection: 'customers';
+      });
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -136,6 +149,24 @@ export interface UserAuthOperations {
     password: string;
   };
 }
+export interface CustomerAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections".
@@ -145,6 +176,11 @@ export interface Collection {
   title: string;
   description: string;
   featuredImage: string | Media;
+  artworks?: {
+    docs?: (string | Artwork)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -249,7 +285,13 @@ export interface Media {
 export interface Artwork {
   id: string;
   title: string;
-  image?: (string | null) | Media;
+  collection?: (string | null) | Collection;
+  quantity?: number | null;
+  price?: number | null;
+  images: {
+    image?: (string | null) | Media;
+    id?: string | null;
+  }[];
   description: {
     root: {
       type: string;
@@ -265,7 +307,6 @@ export interface Artwork {
     };
     [k: string]: unknown;
   };
-  collection?: (string | null) | Collection;
   meta?: {
     title?: string | null;
     /**
@@ -287,9 +328,58 @@ export interface Artwork {
  */
 export interface User {
   id: string;
-  name?: string | null;
+  role: 'super-admin' | 'admin';
+  name: string;
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: string;
+  customer?: (string | null) | Customer;
+  items: {
+    artwork: string | Artwork;
+    quantity: number;
+    price: number;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  /**
+   * Mark customer as deleted (soft delete)
+   */
+  isDeleted?: boolean | null;
+  cart?: (string | Cart)[] | null;
+  role: 'customer';
+  updatedAt: string;
+  createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -635,6 +725,14 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
+        relationTo: 'carts';
+        value: string | Cart;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: string | Customer;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: string | Form;
       } | null)
@@ -651,10 +749,15 @@ export interface PayloadLockedDocument {
         value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: string | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: string | Customer;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -664,10 +767,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: string;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: string | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: string | Customer;
+      };
   key?: string | null;
   value?:
     | {
@@ -700,6 +808,7 @@ export interface CollectionsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   featuredImage?: T;
+  artworks?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -711,9 +820,16 @@ export interface CollectionsSelect<T extends boolean = true> {
  */
 export interface ArtworksSelect<T extends boolean = true> {
   title?: T;
-  image?: T;
-  description?: T;
   collection?: T;
+  quantity?: T;
+  price?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?: T;
   meta?:
     | T
     | {
@@ -826,9 +942,54 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   name?: T;
   updatedAt?: T;
   createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  customer?: T;
+  items?:
+    | T
+    | {
+        artwork?: T;
+        quantity?: T;
+        price?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  phoneNumber?: T;
+  address?: T;
+  city?: T;
+  state?: T;
+  isDeleted?: T;
+  cart?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;

@@ -11,9 +11,9 @@ import { sliderData } from './slider-data'
 import { Slide } from './slide'
 const Slider = () => {
   return (
-    <div className="">
+    <div className="bg-radial from-gray-900 to-amber-800">
       <Carousel
-        className="relativr"
+        className="relative"
         opts={{
           align: 'start',
           loop: true,
@@ -26,8 +26,8 @@ const Slider = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="p-6 bg-accent-foreground/50 text-white border-none absolute left-5" />
-        <CarouselNext className="p-6 bg-accent-foreground/50 text-white border-none absolute right-5" />
+        <CarouselPrevious className="p-6 bg-amber-500/50 text-white border-none absolute left-5 hover:bg-amber-500/70 transition-colors" />
+        <CarouselNext className="p-6 bg-amber-500/50 text-white border-none absolute right-5 hover:bg-amber-500/70 transition-colors" />
       </Carousel>
     </div>
   )

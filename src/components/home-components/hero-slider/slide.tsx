@@ -23,7 +23,7 @@ export const Slide = ({ info, bgImage, title, buttonTitle, link }: SliderItem) =
               <Button
                 variant="outline"
                 size="lg"
-                className="py-8 min-w-[150px] px-4 rounded-lg text-lg font-bold border-2 border-solid border-[var(--accent)] bg-transparent text-[var(--accent)] hover:text-white hover:bg-[var(--accent)] cursor-pointer"
+                className="py-8 min-w-[150px] px-4 rounded-lg text-lg font-bold border-2 border-solid border-[var(--accent)] bg-transparent text-[var(--accent)] hover:text-white hover:bg-amber-500 cursor-pointer"
               >
                 {buttonTitle}
               </Button>

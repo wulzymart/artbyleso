@@ -3,6 +3,7 @@ import type { ButtonProps } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
+import Link from 'next/link'
 import * as React from 'react'
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
@@ -25,22 +26,32 @@ const PaginationItem: React.FC<
 > = ({ className, ref, ...props }) => <li className={cn('', className)} ref={ref} {...props} />
 
 type PaginationLinkProps = {
+  href: string
   isActive?: boolean
 } & Pick<ButtonProps, 'size'> &
   React.ComponentProps<'button'>
 
-const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
-  <button
-    aria-current={isActive ? 'page' : undefined}
-    className={cn(
-      buttonVariants({
-        size,
-        variant: isActive ? 'outline' : 'ghost',
-      }),
-      className,
-    )}
-    {...props}
-  />
+const PaginationLink = ({
+  className,
+  isActive,
+  size = 'icon',
+  href,
+  ...props
+}: PaginationLinkProps) => (
+  <Link href={href}>
+    <button
+      aria-current={isActive ? 'page' : undefined}
+      className={cn(
+        buttonVariants({
+          size,
+          variant: isActive ? 'outline' : 'ghost',
+        }),
+        className,
+        'bg-amber-500',
+      )}
+      {...props}
+    />
+  </Link>
 )
 
 const PaginationPrevious = ({

@@ -4,13 +4,26 @@ import Link from 'next/link'
 import { Menu, X, Search, User, ShoppingCart } from 'lucide-react'
 import { Logo } from '../Logo/Logo'
 import { usePathname } from 'next/navigation'
+import { Button } from '../ui/button'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import AccountAccess from '../account/accout_access'
+import { useCartStore } from '@/context/CartProvider'
+import { Cart } from '../cart'
 
 const NavigationMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const notHomePage = usePathname() !== '/'
   const [isMobile, setIsMobile] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [cartItemCount, setCartItemCount] = useState(3) // Example cart item count
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,6 +72,8 @@ const NavigationMenu = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+  const { getCount } = useCartStore((state) => state)
+  const cartCount = getCount()
 
   return (
     <nav
@@ -80,7 +95,7 @@ const NavigationMenu = () => {
             <button
               className={`
                 p-2 rounded-full hover:bg-opacity-20
-                ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white'}
+                ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-amber-500' : 'text-white hover:bg-amber-500'}
               `}
               aria-label="Search"
             >
@@ -88,40 +103,69 @@ const NavigationMenu = () => {
             </button>
 
             {/* User Icon */}
-            <Link
-              href="/account"
-              className={`
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`
                 p-2 rounded-full hover:bg-opacity-20
-                ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white'}
+                ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-amber-500' : 'text-white hover:bg-amber-500'}
               `}
-            >
-              <User size={20} />
-            </Link>
+                >
+                  <User size={20} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Account Access</SheetTitle>
+                </SheetHeader>
+                <div className="min-h-[600px]">
+                  <AccountAccess />
+                </div>
+              </SheetContent>
+            </Sheet>
 
             {/* Cart Icon with Badge */}
-            <Link href="/cart" className="relative p-2 rounded-full hover:bg-opacity-20">
-              <ShoppingCart
-                size={20}
-                className={
-                  isScrolled || isMobile || notHomePage
-                    ? 'text-gray-700 hover:text-gray-900'
-                    : 'text-white'
-                }
-              />
-              {cartItemCount > 0 && (
-                <span
-                  className={`
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative p-2 rounded-full hover:bg-opacity-20"
+                >
+                  <ShoppingCart
+                    size={20}
+                    className={
+                      isScrolled || isMobile || notHomePage
+                        ? 'text-gray-700 hover:text-gray-900'
+                        : 'text-white'
+                    }
+                  />
+                  {cartCount > 0 && (
+                    <span
+                      className={`
                     absolute -top-1 -right-1 
                     flex items-center justify-center 
                     h-4 w-4 text-xs font-bold 
                     rounded-full 
                     ${isScrolled || isMobile || notHomePage ? 'bg-red-500 text-white' : 'bg-white text-red-500'}
                   `}
-                >
-                  {cartItemCount}
-                </span>
-              )}
-            </Link>
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="top">
+                <SheetHeader>
+                  <SheetTitle className="text-2xl font-bold">Cart</SheetTitle>
+                </SheetHeader>
+                <div className="min-h-[600px]">
+                  <Cart />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
 
           {/* Centered Logo */}
@@ -148,7 +192,7 @@ const NavigationMenu = () => {
                 href={item.href}
                 className={`
                   hover:bg-opacity-20 px-3 py-2 rounded-md text font-medium
-                  ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white'}
+                  ${isScrolled || isMobile || notHomePage ? 'text-gray-700 hover:bg-amber-500' : 'text-white hover:bg-amber-500'}
                 `}
               >
                 {item.label}
@@ -194,9 +238,9 @@ const NavigationMenu = () => {
                 </Link>
                 <Link href="/cart" className="relative text-gray-700">
                   <ShoppingCart size={20} />
-                  {cartItemCount > 0 && (
+                  {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white h-4 w-4 rounded-full flex items-center justify-center text-xs">
-                      {cartItemCount}
+                      {cartCount}
                     </span>
                   )}
                 </Link>

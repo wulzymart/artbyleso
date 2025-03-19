@@ -10,12 +10,10 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
-import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
 import {
@@ -26,22 +24,24 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { isAdminOrSuperAdmin } from '@/access/roleBasedAccess'
+import { anyone } from '@/access/anyone'
 
 export const Artworks: CollectionConfig<'artworks'> = {
   slug: 'artworks',
   access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticatedOrPublished,
-    update: authenticated,
+    create: isAdminOrSuperAdmin,
+    delete: isAdminOrSuperAdmin,
+    read: anyone,
+    update: isAdminOrSuperAdmin,
   },
-  // This config controls what's populated by default when a post is referenced
-  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
-  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>
   defaultPopulate: {
     title: true,
     slug: true,
     collection: true,
+    images: { image: true, id: true },
+    quantity: true,
+    price: true,
     meta: {
       image: true,
       description: true,
@@ -75,14 +75,50 @@ export const Artworks: CollectionConfig<'artworks'> = {
       required: true,
     },
     {
+      name: 'collection',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      relationTo: 'collections',
+      hasMany: false,
+    },
+    {
+      name: 'quantity',
+      type: 'number',
+      defaultValue: '0',
+      label: 'Quantity Available',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'price',
+      type: 'number',
+      defaultValue: '0',
+      label: 'Price (NGN)',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {
           fields: [
             {
-              name: 'image',
-              type: 'upload',
-              relationTo: 'media',
+              name: 'images',
+              label: 'Images',
+              type: 'array',
+              required: true,
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                },
+              ],
+              minRows: 1,
             },
             {
               name: 'description',
@@ -104,19 +140,6 @@ export const Artworks: CollectionConfig<'artworks'> = {
             },
           ],
           label: 'Details',
-        },
-        {
-          fields: [
-            {
-              name: 'collection',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              relationTo: 'collections',
-            },
-          ],
-          label: 'Meta',
         },
         {
           name: 'meta',
@@ -171,7 +194,6 @@ export const Artworks: CollectionConfig<'artworks'> = {
   ],
   hooks: {
     afterChange: [revalidatePost],
-    afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },
   versions: {
