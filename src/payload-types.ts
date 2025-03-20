@@ -71,8 +71,10 @@ export interface Config {
     artworks: Artwork;
     media: Media;
     users: User;
-    carts: Cart;
+    orders: Order;
     customers: Customer;
+    payments: Payment;
+    shipments: Shipment;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
@@ -91,8 +93,10 @@ export interface Config {
     artworks: ArtworksSelect<false> | ArtworksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
-    carts: CartsSelect<false> | CartsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
+    shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -343,17 +347,21 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts".
+ * via the `definition` "orders".
  */
-export interface Cart {
+export interface Order {
   id: string;
-  customer?: (string | null) | Customer;
+  customer: string | Customer;
   items: {
     artwork: string | Artwork;
     quantity: number;
     price: number;
     id?: string | null;
   }[];
+  total: number;
+  paymentStatus: 'paid' | 'pending';
+  shipping: string | Shipment;
+  paymentInfo?: (string | null) | Payment;
   updatedAt: string;
   createdAt: string;
 }
@@ -373,7 +381,7 @@ export interface Customer {
    * Mark customer as deleted (soft delete)
    */
   isDeleted?: boolean | null;
-  cart?: (string | Cart)[] | null;
+  orders?: (string | Order)[] | null;
   role: 'customer';
   updatedAt: string;
   createdAt: string;
@@ -388,6 +396,41 @@ export interface Customer {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shipments".
+ */
+export interface Shipment {
+  id: string;
+  order: string | Order;
+  trackingNumber?: string | null;
+  shippingProvider?: string | null;
+  shippingStatus?: ('pending' | 'shipped' | 'delivered') | null;
+  shippingAddress?: {
+    street?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zipCode?: string | null;
+    country?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: string;
+  transactionId: string;
+  transactionRef: string;
+  amount: number;
+  currency: string;
+  customer: string | Customer;
+  order: string | Order;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -725,12 +768,20 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
-        relationTo: 'carts';
-        value: string | Cart;
+        relationTo: 'orders';
+        value: string | Order;
       } | null)
     | ({
         relationTo: 'customers';
         value: string | Customer;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: string | Payment;
+      } | null)
+    | ({
+        relationTo: 'shipments';
+        value: string | Shipment;
       } | null)
     | ({
         relationTo: 'forms';
@@ -956,9 +1007,9 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts_select".
+ * via the `definition` "orders_select".
  */
-export interface CartsSelect<T extends boolean = true> {
+export interface OrdersSelect<T extends boolean = true> {
   customer?: T;
   items?:
     | T
@@ -968,6 +1019,10 @@ export interface CartsSelect<T extends boolean = true> {
         price?: T;
         id?: T;
       };
+  total?: T;
+  paymentStatus?: T;
+  shipping?: T;
+  paymentInfo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -983,7 +1038,7 @@ export interface CustomersSelect<T extends boolean = true> {
   city?: T;
   state?: T;
   isDeleted?: T;
-  cart?: T;
+  orders?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -997,6 +1052,41 @@ export interface CustomersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  transactionId?: T;
+  transactionRef?: T;
+  amount?: T;
+  currency?: T;
+  customer?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shipments_select".
+ */
+export interface ShipmentsSelect<T extends boolean = true> {
+  order?: T;
+  trackingNumber?: T;
+  shippingProvider?: T;
+  shippingStatus?: T;
+  shippingAddress?:
+    | T
+    | {
+        street?: T;
+        city?: T;
+        state?: T;
+        zipCode?: T;
+        country?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

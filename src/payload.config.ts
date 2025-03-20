@@ -14,8 +14,10 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Collections } from './collections/collections'
 import { Artworks } from './collections/Artworks'
-import Carts from './collections/Cart'
+import Orders from './collections/Orders'
 import Customers from './collections/Customers'
+import { Payments } from './collections/Payments'
+import Shipments from './collections/Shipments'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -62,7 +64,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Collections, Artworks, Media, Users, Carts, Customers],
+  collections: [Collections, Artworks, Media, Users, Orders, Customers, Payments, Shipments],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

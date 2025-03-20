@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import signupCustomer from './actions/signup'
+import signupCustomer from '../../context/helper/actions/signup'
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
   const zodSchema = z
     .object({

@@ -3,8 +3,8 @@
 import { CollectionConfig } from 'payload'
 import { isAdminOrSelf } from '@/access/roleBasedAccess'
 
-const Carts: CollectionConfig = {
-  slug: 'carts',
+const Orders: CollectionConfig = {
+  slug: 'orders',
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['id', 'customer', 'updatedAt'],
@@ -40,11 +40,12 @@ const Carts: CollectionConfig = {
       name: 'customer',
       type: 'relationship',
       relationTo: 'customers',
-      required: false,
+      required: true,
       hasMany: false,
     },
     {
       name: 'items',
+      label: 'Items',
       type: 'array',
       required: true,
       fields: [
@@ -68,7 +69,38 @@ const Carts: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'total',
+      type: 'number',
+      required: true,
+    },
+    {
+      name: 'paymentStatus',
+      type: 'select',
+      defaultValue: 'pending',
+      required: true,
+      options: [
+        { label: 'Paid', value: 'paid' },
+        {
+          label: 'Pending',
+          value: 'pending',
+        },
+      ],
+    },
+    {
+      name: 'shipping',
+      type: 'relationship',
+      required: true,
+      relationTo: 'shipments',
+      hasMany: false,
+    },
+    {
+      name: 'paymentInfo',
+      type: 'relationship',
+      relationTo: 'payments',
+      hasMany: false,
+    },
   ],
 }
 
-export default Carts
+export default Orders

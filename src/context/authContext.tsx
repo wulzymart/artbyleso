@@ -1,8 +1,10 @@
 'use client'
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect, createContext, useContext, startTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Customer } from '@/payload-types'
 import { toast } from 'sonner'
+import { getCurrentCustomer, loginCustomer, logoutCustomer } from '@/context/helper/actions/login'
+import { set } from 'zod'
 
 interface UseAuthReturn {
   user: Customer | null
@@ -30,19 +32,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const checkAuth = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/customers/me', {
-        credentials: 'include', // Important for cookies
-      })
-
-      if (!response.ok) {
+      const user = await getCurrentCustomer()
+      if (!user) {
         setUser(null)
         setIsAuthenticated(false)
+        setLoading(false)
         return
       }
-
-      const data = await response.json()
-      setUser(data.user)
+      setUser(user)
       setIsAuthenticated(true)
+      setLoading(false)
     } catch (err) {
       setUser(null)
     } finally {
@@ -54,52 +53,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string, collection: string = 'customers') => {
     setLoading(true)
     setError(null)
-
-    try {
-      const response = await fetch('/api/customers/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+    startTransition(async () => {
+      const user = await loginCustomer({ email, password })
+      if (!user) {
+        toast.error('Failed to login')
+        setError('Login failed')
+        return
       }
-
-      setUser(data.user)
+      setUser(user)
       setIsAuthenticated(true)
-      router.push('/account')
-      toast.success(`welcome back ${data.user.firstName}`)
-    } catch (err) {
-      toast.error('Failed to login')
-      setError(err instanceof Error ? err.message : 'An unknown error occurred')
-      throw err
-    } finally {
-      setLoading(false)
-    }
+      // router.push('/account')
+      toast.success(`welcome back ${user.firstName}`)
+    })
   }
 
   // Logout function
   const logout = async () => {
-    try {
-      setLoading(true)
-      await fetch('/api/customer/logout', {
-        method: 'POST',
-        credentials: 'include',
-      })
+    startTransition(async () => {
+      await logoutCustomer()
+      toast.success('Logged out successfully')
       setUser(null)
       setIsAuthenticated(false)
-      router.push('/login')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Logout failed')
-    } finally {
-      setLoading(false)
-    }
+      router.push('/')
+    })
   }
 
   return (

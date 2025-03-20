@@ -74,13 +74,10 @@ const Customers: CollectionConfig = {
       },
     },
     {
-      name: 'cart',
+      name: 'orders',
       type: 'relationship',
-      relationTo: 'carts',
+      relationTo: 'orders',
       hasMany: true,
-      admin: {
-        condition: () => false, // Hide in admin UI
-      },
     },
     {
       name: 'role',
@@ -94,38 +91,6 @@ const Customers: CollectionConfig = {
     },
     // Add other customer-specific fields
   ],
-  hooks: {
-    afterChange: [
-      async ({ doc, req, operation }) => {
-        const payload = await getPayload({ config })
-        // Create a cart for new customers
-        if (operation === 'create') {
-          try {
-            const cart = await payload.create({
-              collection: 'carts',
-              data: {
-                customer: doc.id,
-                items: [],
-              },
-            })
-
-            // Update the customer with the cart reference
-            // await payload.update({
-            //   collection: 'customers',
-            //   id: doc.id,
-            //   data: {
-            //     cart: cart.id,
-            //   },
-            //   // Skip access control for this internal operation
-            //   overrideAccess: true,
-            // })
-          } catch (error) {
-            console.error('Error creating cart for customer:', error)
-          }
-        }
-      },
-    ],
-  },
 }
 
 export default Customers
