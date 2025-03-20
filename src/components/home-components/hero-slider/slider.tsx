@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/carousel'
 import { sliderData } from './slider-data'
 import { Slide } from './slide'
+import { ParallaxSection } from '@/components/ui/parallax-section'
+import HeroParallax from '../hero-parallax'
 const Slider = () => {
   return (
     <div className="bg-radial from-gray-900 to-amber-800">
@@ -22,7 +24,7 @@ const Slider = () => {
         <CarouselContent>
           {sliderData.map((item, index) => (
             <CarouselItem key={index}>
-              <Slide {...item} />
+              <HeroParallax {...item} />
             </CarouselItem>
           ))}
         </CarouselContent>
