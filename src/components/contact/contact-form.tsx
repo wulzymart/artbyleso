@@ -4,7 +4,14 @@ import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -23,8 +30,8 @@ type ContactFormValues = z.infer<typeof formSchema>
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formStatus, setFormStatus] = useState<{
-    type: 'success' | 'error' | null;
-    message: string | null;
+    type: 'success' | 'error' | null
+    message: string | null
   }>({
     type: null,
     message: null,
@@ -45,7 +52,7 @@ export function ContactForm() {
   async function onSubmit(data: ContactFormValues) {
     setIsSubmitting(true)
     setFormStatus({ type: null, message: null })
-    
+
     try {
       await sendContactForm(data)
       setFormStatus({
@@ -75,10 +82,10 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel className="text-white">Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Your name" 
-                      {...field} 
-                      className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white"
+                    <Input
+                      placeholder="Your name"
+                      {...field}
+                      className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white placeholder:text-gray-100"
                     />
                   </FormControl>
                   <FormMessage />
@@ -93,11 +100,11 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel className="text-white">Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Your email address" 
-                      type="email" 
-                      {...field} 
-                      className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white"
+                    <Input
+                      placeholder="Your email address"
+                      type="email"
+                      {...field}
+                      className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white placeholder:text-gray-100"
                     />
                   </FormControl>
                   <FormMessage />
@@ -113,10 +120,10 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel className="text-white">Subject</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Message subject" 
-                    {...field} 
-                    className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white"
+                  <Input
+                    placeholder="Message subject"
+                    {...field}
+                    className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white placeholder:text-gray-100"
                   />
                 </FormControl>
                 <FormMessage />
@@ -131,11 +138,11 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel className="text-white">Message</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Your message" 
-                    {...field} 
+                  <Textarea
+                    placeholder="Your message"
+                    {...field}
                     rows={6}
-                    className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white resize-none"
+                    className="bg-black/20 border-amber-500/30 focus:border-amber-400 text-white resize-none placeholder:text-gray-100"
                   />
                 </FormControl>
                 <FormMessage />
@@ -144,17 +151,21 @@ export function ContactForm() {
           />
 
           {formStatus.message && (
-            <div className={`p-4 rounded-md ${
-              formStatus.type === 'success' ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'
-            }`}>
+            <div
+              className={`p-4 rounded-md ${
+                formStatus.type === 'success'
+                  ? 'bg-green-500/20 text-green-200'
+                  : 'bg-red-500/20 text-red-200'
+              }`}
+            >
               {formStatus.message}
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isSubmitting}
-            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold py-3"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white placeholder:text-gray-100 font-bold py-3"
           >
             {isSubmitting ? 'Sending...' : 'Send Message'}
           </Button>

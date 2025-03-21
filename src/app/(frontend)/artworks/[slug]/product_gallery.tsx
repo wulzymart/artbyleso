@@ -1,9 +1,9 @@
-'use-client'
 'use client'
 
 import { Media as MediaComponent } from '@/components/Media'
 import { Media } from '@/payload-types'
 import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface ImageGalleryProps {
   images: Media[]
@@ -23,24 +23,35 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => {
 
   return (
     <div>
-      <div className="relative w-full h-[600px] object-cover rounded-lg shadow-md">
-        <MediaComponent resource={images[currentImage]} fill />
+      <div className="relative w-full h-[600px] rounded-lg shadow-xl overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImage}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <MediaComponent resource={images[currentImage]} fill className="object-contain" />
+          </motion.div>
+        </AnimatePresence>
 
         {/* Navigation arrows */}
-        <button
+        <motion.button
           onClick={prevImage}
           className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 text-gray-800"
           aria-label="Previous image"
         >
           ←
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={nextImage}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 text-gray-800"
           aria-label="Next image"
         >
           →
-        </button>
+        </motion.button>
       </div>
 
       {/* Thumbnail Gallery */}

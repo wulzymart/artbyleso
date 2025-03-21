@@ -56,7 +56,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-gray-400">Email: info@artbyleso.com</li>
+              <li className="text-gray-400">Email: info@lesooriginals.com</li>
               <li className="text-gray-400">Phone: +1 (123) 456-7890</li>
             </ul>
           </div>

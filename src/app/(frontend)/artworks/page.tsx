@@ -12,7 +12,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import Artworks from '@/components/works/artworks_list'
+import ArtworksListParallax from '@/components/works/artworks-list-parallax'
+import { ParallaxSection } from '@/components/ui/parallax-section'
 type Args = {
   params: Promise<{}>
   searchParams: Promise<{ page?: string }>
@@ -37,10 +38,28 @@ export default async function ArtworksPage({ params, searchParams }: Args) {
   })
   const pageUrl = '/artworks'
   return (
-    <div className="min-h-screen bg-radial from-gray-500 to-amber-800 text-white py-20">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-8 text-center">Artworks</h1>
-        <Artworks artworks={artworks} />
+    <div className="min-h-screen text-gray-700">
+      {/* Hero Section with Parallax */}
+      <ParallaxSection
+        bgImage="/art2.jpg"
+        speed={0.3}
+        overlay={true}
+        overlayColor="#000"
+        overlayOpacity={0.7}
+        className="min-h-[60vh] flex items-center"
+        contentClassName="container mx-auto px-4 py-20"
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">Artworks Gallery</h1>
+          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+            Discover unique pieces that capture the essence of African culture and contemporary art
+          </p>
+        </div>
+      </ParallaxSection>
+
+      {/* Artworks Grid */}
+      <div className="container mx-auto px-4 py-20">
+        <ArtworksListParallax artworks={artworks} />
         <div className="mt-10">
           {page && (
             <Pagination>

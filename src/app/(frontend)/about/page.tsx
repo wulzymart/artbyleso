@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-radial from-gray-500 to-amber-800 text-white">
+    <div className="min-h-screen bg-white text-gray-600">
       {/* Hero Section */}
       <div className="relative h-[50vh] overflow-hidden">
         <div className="absolute inset-0 bg-black/40 z-10"></div>
@@ -61,22 +61,22 @@ export default function AboutPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12">
-              <div className="bg-black/30 p-6 rounded-lg hover:bg-black/40 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-amber-400 mb-3">Inspiration</h3>
+              <div className="bg-black/50 p-6 rounded-lg hover:bg-black/60  text-gray-100 transition-all duration-300 transform hover:-translate-y-1">
+                <h3 className="text-xl font-bold text-amber-200 mb-3">Inspiration</h3>
                 <p>
                   I draw inspiration from the rich tapestry of African culture, everyday life
                   experiences, and the economic influences on people.
                 </p>
               </div>
-              <div className="bg-black/30 p-6 rounded-lg hover:bg-black/40 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-amber-400 mb-3">Technique</h3>
+              <div className="bg-black/50 p-6 rounded-lg hover:bg-black/60  text-gray-100 transition-all duration-300 transform hover:-translate-y-1">
+                <h3 className="text-xl font-bold text-amber-200 mb-3">Technique</h3>
                 <p>
                   Working with various mediums including paints and mixed media, I create vibrant
                   pieces that tell compelling stories.
                 </p>
               </div>
-              <div className="bg-black/30 p-6 rounded-lg hover:bg-black/40 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-amber-400 mb-3">Vision</h3>
+              <div className="bg-black/50 p-6 rounded-lg hover:bg-black/60  text-gray-100 transition-all duration-300 transform hover:-translate-y-1">
+                <h3 className="text-xl font-bold text-amber-200 mb-3">Vision</h3>
                 <p>
                   Through my art, I hope to share a journey of self-exploration, progression &
                   acceptance with everyone who experiences my work.
@@ -91,7 +91,7 @@ export default function AboutPage() {
             </p>
 
             <div className="mt-12 text-center">
-              <p className="text-2xl font-light italic text-amber-300">
+              <p className="text-2xl font-light italic text-amber-400">
                 "Through my art, I hope to share with you a journey of self-exploration, progression
                 & acceptance."
               </p>
