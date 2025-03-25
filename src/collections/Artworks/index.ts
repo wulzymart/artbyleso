@@ -40,8 +40,14 @@ export const Artworks: CollectionConfig<'artworks'> = {
     slug: true,
     collection: true,
     images: { image: true, id: true },
-    quantity: true,
     price: true,
+    availableInPrint: true,
+    printPrice: true,
+    mainDiscount: true,
+    mainDiscountPrice: true,
+    printDiscount: true,
+    printDiscountPrice: true,
+    publishedAt: true,
     meta: {
       image: true,
       description: true,
@@ -84,13 +90,23 @@ export const Artworks: CollectionConfig<'artworks'> = {
       hasMany: false,
     },
     {
-      name: 'quantity',
-      type: 'number',
-      defaultValue: '0',
-      label: 'Quantity Available',
+      name: 'salesStatus',
+      type: 'select',
+      defaultValue: 'available',
+      label: 'Sales Status',
       admin: {
         position: 'sidebar',
       },
+      options: [
+        {
+          label: 'Available',
+          value: 'available',
+        },
+        {
+          label: 'Sold Out',
+          value: 'soldOut',
+        },
+      ],
     },
     {
       name: 'price',
@@ -98,6 +114,65 @@ export const Artworks: CollectionConfig<'artworks'> = {
       defaultValue: '0',
       label: 'Price (NGN)',
       admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'availableInPrint',
+      label: 'Available in Print',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'printPrice',
+      label: 'Print Price (NGN)',
+      type: 'number',
+      defaultValue: '0',
+      admin: {
+        condition: (_, siblingData) => siblingData.availableInPrint === true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'mainDiscount',
+      label: 'Main Discount',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'mainDiscountPrice',
+      label: 'Main Discount Price (NGN)',
+      type: 'number',
+      defaultValue: '0',
+      admin: {
+        condition: (_, siblingData) => siblingData.mainDiscount === true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'printDiscount',
+      label: 'Print Discount',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        condition: (_, siblingData) => siblingData.availableInPrint === true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'printDiscountPrice',
+      label: 'Print Discount Price (NGN)',
+      type: 'number',
+      defaultValue: '0',
+      admin: {
+        condition: (_, siblingData) =>
+          siblingData.availableInPrint === true && siblingData.printDiscount === true,
         position: 'sidebar',
       },
     },

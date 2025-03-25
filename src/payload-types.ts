@@ -75,6 +75,7 @@ export interface Config {
     customers: Customer;
     payments: Payment;
     shipments: Shipment;
+    sales: Sale;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
@@ -97,6 +98,7 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
     shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
+    sales: SalesSelect<false> | SalesSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -290,8 +292,14 @@ export interface Artwork {
   id: string;
   title: string;
   collection?: (string | null) | Collection;
-  quantity?: number | null;
+  salesStatus?: ('available' | 'soldOut') | null;
   price?: number | null;
+  availableInPrint?: boolean | null;
+  printPrice?: number | null;
+  mainDiscount?: boolean | null;
+  mainDiscountPrice?: number | null;
+  printDiscount?: boolean | null;
+  printDiscountPrice?: number | null;
   images: {
     image?: (string | null) | Media;
     id?: string | null;
@@ -429,6 +437,18 @@ export interface Payment {
   currency: string;
   customer: string | Customer;
   order: string | Order;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sales".
+ */
+export interface Sale {
+  id: string;
+  from: string;
+  to: string;
+  percentage: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -784,6 +804,10 @@ export interface PayloadLockedDocument {
         value: string | Shipment;
       } | null)
     | ({
+        relationTo: 'sales';
+        value: string | Sale;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: string | Form;
       } | null)
@@ -872,8 +896,14 @@ export interface CollectionsSelect<T extends boolean = true> {
 export interface ArtworksSelect<T extends boolean = true> {
   title?: T;
   collection?: T;
-  quantity?: T;
+  salesStatus?: T;
   price?: T;
+  availableInPrint?: T;
+  printPrice?: T;
+  mainDiscount?: T;
+  mainDiscountPrice?: T;
+  printDiscount?: T;
+  printDiscountPrice?: T;
   images?:
     | T
     | {
@@ -1085,6 +1115,17 @@ export interface ShipmentsSelect<T extends boolean = true> {
         zipCode?: T;
         country?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sales_select".
+ */
+export interface SalesSelect<T extends boolean = true> {
+  from?: T;
+  to?: T;
+  percentage?: T;
   updatedAt?: T;
   createdAt?: T;
 }
