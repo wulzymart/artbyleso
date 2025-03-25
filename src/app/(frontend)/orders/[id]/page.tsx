@@ -15,8 +15,13 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+type Args = {
+  params: Promise<{
+    id: string
+  }>
+}
 
-export default async function OrderPage({ params }: { params: { id: string } }) {
+export default async function OrderPage({ params }: Args) {
   const payload = await getPayload({ config })
   const { user } = await payload.auth({ headers: await headers() })
 
@@ -27,7 +32,7 @@ export default async function OrderPage({ params }: { params: { id: string } }) 
   // Fetch the specific order
   const order = (await payload.findByID({
     collection: 'orders',
-    id: params.id,
+    id: (await params).id,
   })) as Order
 
   // Check if the order belongs to the current user
@@ -66,7 +71,7 @@ export default async function OrderPage({ params }: { params: { id: string } }) 
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Total Price:</span>
-                <span className="font-bold">${order.total.toFixed(2)}</span>
+                <span className="font-bold">₦{order.total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Payment Status:</span>
@@ -185,9 +190,9 @@ export default async function OrderPage({ params }: { params: { id: string } }) 
                           'Unknown Artwork'
                         )}
                       </TableCell>
-                      <TableCell>${item.price.toFixed(2)}</TableCell>
+                      <TableCell>₦{item.price.toFixed(2)}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
-                      <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
+                      <TableCell>₦{(item.price * item.quantity).toFixed(2)}</TableCell>
                     </TableRow>
                   )
                 })}
@@ -195,7 +200,7 @@ export default async function OrderPage({ params }: { params: { id: string } }) 
                   <TableCell colSpan={4} className="text-right font-bold">
                     Total:
                   </TableCell>
-                  <TableCell className="font-bold">${order.total.toFixed(2)}</TableCell>
+                  <TableCell className="font-bold">₦{order.total.toFixed(2)}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

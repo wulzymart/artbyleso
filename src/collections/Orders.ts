@@ -90,7 +90,7 @@ const Orders: CollectionConfig = {
     {
       name: 'shipping',
       type: 'relationship',
-      required: true,
+      required: false,
       relationTo: 'shipments',
       hasMany: false,
     },

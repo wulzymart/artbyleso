@@ -360,7 +360,7 @@ export interface Order {
   }[];
   total: number;
   paymentStatus: 'paid' | 'pending';
-  shipping: string | Shipment;
+  shipping?: (string | null) | Shipment;
   paymentInfo?: (string | null) | Payment;
   updatedAt: string;
   createdAt: string;

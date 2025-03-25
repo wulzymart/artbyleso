@@ -183,9 +183,9 @@ export default async function OrdersPage() {
                                   'Unknown Artwork'
                                 )}
                               </TableCell>
-                              <TableCell>${item.price.toFixed(2)}</TableCell>
+                              <TableCell>₦{item.price.toFixed(2)}</TableCell>
                               <TableCell>{item.quantity}</TableCell>
-                              <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
+                              <TableCell>₦{(item.price * item.quantity).toFixed(2)}</TableCell>
                             </TableRow>
                           )
                         })}

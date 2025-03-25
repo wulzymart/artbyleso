@@ -7,7 +7,7 @@ import { ParallaxSection } from '@/components/ui/parallax-section'
 
 type Args = {
   params: Promise<{
-    slug: string[]
+    slug: string
   }>
 }
 export default async function CollectionPage({ params }: Args) {

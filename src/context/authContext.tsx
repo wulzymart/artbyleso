@@ -54,16 +54,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true)
     setError(null)
     startTransition(async () => {
-      const user = await loginCustomer({ email, password })
-      if (!user) {
-        toast.error('Failed to login')
-        setError('Login failed')
-        return
+      try {
+        const user = await loginCustomer({ email, password })
+        setUser(user)
+        setIsAuthenticated(true)
+        toast.success('Logged in successfully')
+        router.push('/')
+      } catch (err: any) {
+        setError(err.message)
+        toast.error(err.message)
+      } finally {
+        setLoading(false)
       }
-      setUser(user)
-      setIsAuthenticated(true)
-      // router.push('/account')
-      toast.success(`welcome back ${user.firstName}`)
     })
   }
 

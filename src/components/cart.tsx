@@ -1,16 +1,19 @@
 'use client'
-import React from 'react'
+import React, { startTransition } from 'react'
 import { Media } from './Media'
 import { Button } from './ui/button'
 import { ArrowLeft, ArrowRight, Delete, DeleteIcon, Trash2Icon } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 import Link from 'next/link'
 import { useCartStore } from '@/context/CartProvider'
-
+import { useAuth } from '@/context/authContext'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { addOrder } from '@/context/helper/actions/order'
+import { CheckoutModal } from './checkout-modal'
 export const Cart = () => {
   const {
     items,
-    addItem,
     removeItem,
     increaseQuantity,
     decreaseQuantity,
@@ -20,6 +23,34 @@ export const Cart = () => {
   } = useCartStore((state) => state)
   const count = getCount()
   const cartTotal = getCartTotal()
+  const { isAuthenticated } = useAuth()
+  const router = useRouter()
+  const checkOut = () => {
+    if (isAuthenticated) {
+      // Implement the checkout logic here
+      startTransition(async () => {
+        const order = await addOrder(items)
+        if (!order) {
+          toast('Something went wrong', {
+            description: 'Something went wrong',
+            className: 'bg-red-500',
+            descriptionClassName: 'text-white',
+          })
+          return
+        }
+        toast.success('Order created, proceed to payment')
+        clearCart()
+        router.push(`/orders/${order.id}`)
+      })
+    } else {
+      toast('Please login to checkout', {
+        description: 'Please login to checkout',
+        className: 'bg-red-500',
+        descriptionClassName: 'text-white',
+      })
+      router.push('/login')
+    }
+  }
   return (
     <div className="w-[80vw] mx-auto">
       {count ? (
@@ -65,12 +96,7 @@ export const Cart = () => {
       {count ? (
         <div className="flex flex-col items-end mt-8 gap-6">
           <p className="text-lg font-semibold">Total: ₦{cartTotal}</p>
-          <Button
-            className=" bg-amber-500 hover:bg-amber-600 text-white cursor-pointer"
-            onClick={() => clearCart()}
-          >
-            Checkout
-          </Button>
+          <CheckoutModal />
         </div>
       ) : (
         ''
