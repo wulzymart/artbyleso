@@ -11,14 +11,35 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import signupCustomer from '../../context/helper/actions/signup'
-export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
+import { isValidPhoneNumber } from 'react-phone-number-input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Country, State, City } from 'country-state-city'
+import { ICountry, IState, ICity } from 'country-state-city'
+import { useEffect, useState } from 'react'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { SheetClose } from '../ui/sheet'
+export function SignUpForm({
+  className,
+  inPage,
+  ...props
+}: React.ComponentProps<'div'> & { inPage?: boolean }) {
   const zodSchema = z
     .object({
       firstName: z.string().min(2, { message: 'First name must be at least 2 characters' }),
@@ -26,10 +47,14 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       email: z.string().email({ message: 'Please enter a valid email address' }),
       password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
       confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters' }),
-      phoneNumber: z.string().min(11, { message: 'Phone number must be at least 10 characters' }),
-      address: z.string().min(10, { message: 'Provide a valid address' }),
-      city: z.string().min(2, { message: 'Provide a valid city' }),
-      state: z.string().min(2, { message: 'Provide a valid state' }),
+      phoneNumber: z.string().refine(isValidPhoneNumber, { message: 'Invalid phone number' }),
+      address: z.object({
+        address: z.string().min(10, { message: 'Provide a valid address' }),
+        city: z.string().min(2, { message: 'Provide a valid city' }),
+        state: z.string().min(2, { message: 'Provide a valid state' }),
+        country: z.string().min(2, { message: 'Provide a valid country' }),
+        postalCode: z.string().min(5, { message: 'Provide a valid postal code' }),
+      }),
     })
     .refine(
       (data) => {
@@ -50,21 +75,57 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       password: '',
       confirmPassword: '',
       phoneNumber: '',
-      address: '',
-      city: '',
-      state: '',
+      address: {
+        address: '',
+        city: '',
+        state: '',
+        country: '',
+        postalCode: '',
+      },
     },
   })
+
+  const country = form.watch('address.country')
+  const state = form.watch('address.state')
+
+  const [countries, setCountries] = useState<(ICountry & { id: number })[]>([])
+  const [states, setStates] = useState<(IState & { id: number })[]>([])
+  const [cities, setCities] = useState<(ICity & { id: number })[]>([])
+  const localeApi = process.env.NEXT_PUBLIC_LOCALE_API
+  useEffect(() => {
+    fetch(`${localeApi}/countries`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCountries(data)
+      })
+  }, [])
+  useEffect(() => {
+    const selectedCountry = countries.find((c) => c.name === country)
+    if (selectedCountry) {
+      fetch(`${localeApi}/countries/${selectedCountry.id}/states`)
+        .then((res) => res.json())
+        .then((data) => setStates(data))
+    }
+  }, [country])
+  useEffect(() => {
+    const selectedState = states.find((s) => s.name === state)
+    if (selectedState) {
+      fetch(`${localeApi}/states/${selectedState.id}/cities`)
+        .then((res) => res.json())
+        .then((data) => setCities(data))
+    }
+  }, [state])
   const onSubmit = async (values: z.infer<typeof zodSchema>) => {
     const { confirmPassword, ...rest } = values
     try {
       const user = await signupCustomer(rest)
-      toast.success(` ${user.firstName}`)
+      toast.success(`Thanks for signing up ${user.firstName}`)
       router.push(`/account/verification?name=${user.firstName}&email=${user.email}`)
     } catch (error) {
       toast.error('Failed to sign up')
     }
   }
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -77,7 +138,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid gap-6">
                 <div className="grid gap-6">
-                  <div className="grid gap-3">
+                  <div className="grid  grid-cols-2 gap-3">
                     <FormField
                       control={form.control}
                       name="firstName"
@@ -87,12 +148,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
-                  </div>
-                  <div className="grid gap-3">
                     <FormField
                       control={form.control}
                       name="lastName"
@@ -102,7 +161,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -117,12 +176,12 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                           <FormControl>
                             <Input type="email" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <div className="grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <FormField
                       control={form.control}
                       name="password"
@@ -132,7 +191,20 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                           <FormControl>
                             <Input type="password" placeholder="••••••••" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="••••••••" {...field} />
+                          </FormControl>
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -145,9 +217,9 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input type="tel" {...field} />
+                            <PhoneInput placeholder="Enter a phone number" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -155,47 +227,218 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                   <div className="grid gap-3">
                     <FormField
                       control={form.control}
-                      name="address"
+                      name="address.address"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Address</FormLabel>
                           <FormControl>
                             <Input type="text" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <div className="grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <FormField
                       control={form.control}
-                      name="city"
+                      name="address.postalCode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>City</FormLabel>
+                          <FormLabel>Postal Code</FormLabel>
                           <FormControl>
                             <Input type="text" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="address.country"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Country</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    'w-full justify-between',
+                                    !field.value && 'text-muted-foreground',
+                                  )}
+                                >
+                                  {field.value
+                                    ? countries.find((country) => country.name === field.value)
+                                        ?.name
+                                    : 'Select Country'}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[200px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search countries..." className="h-9" />
+                                <CommandList>
+                                  <CommandEmpty>No country found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {countries.map((country) => (
+                                      <CommandItem
+                                        value={country.name}
+                                        key={country.isoCode}
+                                        onSelect={() => {
+                                          form.setValue('address.country', country.name)
+                                        }}
+                                      >
+                                        {country.name}
+                                        <Check
+                                          className={cn(
+                                            'ml-auto',
+                                            country.name === field.value
+                                              ? 'opacity-100'
+                                              : 'opacity-0',
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State</FormLabel>
-                          <FormControl>
-                            <Input type="text" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    {country && states.length > 0 ? (
+                      <FormField
+                        control={form.control}
+                        name="address.state"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>State</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      'w-full justify-between',
+                                      !field.value && 'text-muted-foreground',
+                                    )}
+                                  >
+                                    {field.value
+                                      ? states.find((state) => state.name === field.value)?.name
+                                      : 'Select State'}
+                                    <ChevronsUpDown className="opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search states..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No state found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {states.map((state) => (
+                                        <CommandItem
+                                          value={state.name}
+                                          key={state.isoCode}
+                                          onSelect={() => {
+                                            form.setValue('address.state', state.name)
+                                          }}
+                                        >
+                                          {state.name}
+                                          <Check
+                                            className={cn(
+                                              'ml-auto',
+                                              state.name === field.value
+                                                ? 'opacity-100'
+                                                : 'opacity-0',
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage className="text-red-400" />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      ''
+                    )}
+
+                    {state && cities.length > 0 ? (
+                      <FormField
+                        control={form.control}
+                        name="address.city"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>City</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      'w-full justify-between',
+                                      !field.value && 'text-muted-foreground',
+                                    )}
+                                  >
+                                    {field.value
+                                      ? cities.find((city) => city.name === field.value)?.name
+                                      : 'Select City'}
+                                    <ChevronsUpDown className="opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search cities..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No city found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {cities.map((city) => (
+                                        <CommandItem
+                                          value={city.name}
+                                          key={city.name}
+                                          onSelect={() => {
+                                            form.setValue('address.city', city.name)
+                                          }}
+                                        >
+                                          {city.name}
+                                          <Check
+                                            className={cn(
+                                              'ml-auto',
+                                              city.name === field.value
+                                                ? 'opacity-100'
+                                                : 'opacity-0',
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage className="text-red-400" />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      ''
+                    )}
                   </div>
                   {/* <div className="grid gap-3">
                     <FormField
@@ -213,9 +456,17 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                     />
                   </div> */}
 
-                  <Button type="submit" className="w-full">
-                    Sign Up
-                  </Button>
+                  {!inPage ? (
+                    <SheetClose asChild>
+                      <Button type="submit" className="w-full">
+                        Sign Up
+                      </Button>
+                    </SheetClose>
+                  ) : (
+                    <Button type="submit" className="w-full">
+                      Sign Up
+                    </Button>
+                  )}
                 </div>
               </div>
             </form>

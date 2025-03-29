@@ -33,6 +33,7 @@ export default async function ArtworksPage({ params, searchParams }: Args) {
       },
     },
     pagination: true,
+    sort: '-createdAt',
     limit: 10,
     page: currentPage ? Number(currentPage) : 1,
   })

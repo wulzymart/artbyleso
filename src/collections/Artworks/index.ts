@@ -39,19 +39,14 @@ export const Artworks: CollectionConfig<'artworks'> = {
     title: true,
     slug: true,
     collection: true,
-    images: { image: true, id: true },
-    price: true,
-    availableInPrint: true,
-    printPrice: true,
-    mainDiscount: true,
-    mainDiscountPrice: true,
-    printDiscount: true,
-    printDiscountPrice: true,
-    publishedAt: true,
-    meta: {
-      image: true,
-      description: true,
-    },
+    mainImage: true,
+    additionalImages: true,
+    inStock: true,
+    originalPrice: true,
+    discountPeriod: true,
+    discountedPrice: true,
+    dimensions: true,
+    printVersion: true,
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -81,189 +76,128 @@ export const Artworks: CollectionConfig<'artworks'> = {
       required: true,
     },
     {
+      name: 'description',
+      type: 'textarea',
+    },
+    {
+      name: 'year',
+      type: 'number',
+    },
+    {
+      name: 'medium',
+      type: 'select',
+      options: [
+        {
+          label: 'Acrylic',
+          value: 'Acrylic',
+        },
+        {
+          label: 'Watercolor',
+          value: 'Watercolor',
+        },
+        {
+          label: 'Oil Painting',
+          value: 'Oil-Painting',
+        },
+        {
+          label: 'Mixed Media',
+          value: 'Mixed-Media',
+        },
+        {
+          label: 'Digital Art',
+          value: 'Digital-Art',
+        },
+        {
+          label: 'Other',
+          value: 'Other',
+        },
+      ],
+    },
+    {
+      name: 'dimensions',
+      type: 'group',
+      fields: [
+        {
+          name: 'height',
+          type: 'number',
+          required: true,
+        },
+        {
+          name: 'width',
+          type: 'number',
+          required: true,
+        },
+        {
+          name: 'unit',
+          type: 'select',
+          options: ['cm', 'inches'],
+          defaultValue: 'cm',
+        },
+      ],
+    },
+    {
+      name: 'originalPrice',
+      type: 'number',
+      required: true,
+    },
+    {
+      name: 'discountedPrice',
+      type: 'number',
+    },
+    {
+      name: 'discountPeriod',
+      type: 'group',
+      fields: [
+        {
+          name: 'startDate',
+          type: 'date',
+        },
+        {
+          name: 'endDate',
+          type: 'date',
+        },
+      ],
+    },
+    {
+      name: 'printVersion',
+      type: 'group',
+      fields: [
+        {
+          name: 'available',
+          type: 'checkbox',
+          defaultValue: false,
+        },
+        {
+          name: 'price',
+          type: 'number',
+        },
+        {
+          name: 'discountedPrice',
+          type: 'number',
+        },
+      ],
+    },
+    {
       name: 'collection',
       type: 'relationship',
-      admin: {
-        position: 'sidebar',
-      },
       relationTo: 'collections',
       hasMany: false,
     },
     {
-      name: 'salesStatus',
-      type: 'select',
-      defaultValue: 'available',
-      label: 'Sales Status',
-      admin: {
-        position: 'sidebar',
-      },
-      options: [
-        {
-          label: 'Available',
-          value: 'available',
-        },
-        {
-          label: 'Sold Out',
-          value: 'soldOut',
-        },
-      ],
+      name: 'mainImage',
+      type: 'upload',
+      relationTo: 'media',
     },
     {
-      name: 'price',
-      type: 'number',
-      defaultValue: '0',
-      label: 'Price (NGN)',
-      admin: {
-        position: 'sidebar',
-      },
+      name: 'additionalImages',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
     },
     {
-      name: 'availableInPrint',
-      label: 'Available in Print',
+      name: 'inStock',
       type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'printPrice',
-      label: 'Print Price (NGN)',
-      type: 'number',
-      defaultValue: '0',
-      admin: {
-        condition: (_, siblingData) => siblingData.availableInPrint === true,
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'mainDiscount',
-      label: 'Main Discount',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'mainDiscountPrice',
-      label: 'Main Discount Price (NGN)',
-      type: 'number',
-      defaultValue: '0',
-      admin: {
-        condition: (_, siblingData) => siblingData.mainDiscount === true,
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'printDiscount',
-      label: 'Print Discount',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        condition: (_, siblingData) => siblingData.availableInPrint === true,
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'printDiscountPrice',
-      label: 'Print Discount Price (NGN)',
-      type: 'number',
-      defaultValue: '0',
-      admin: {
-        condition: (_, siblingData) =>
-          siblingData.availableInPrint === true && siblingData.printDiscount === true,
-        position: 'sidebar',
-      },
-    },
-    {
-      type: 'tabs',
-      tabs: [
-        {
-          fields: [
-            {
-              name: 'images',
-              label: 'Images',
-              type: 'array',
-              required: true,
-              fields: [
-                {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                },
-              ],
-              minRows: 1,
-            },
-            {
-              name: 'description',
-              type: 'richText',
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                    HorizontalRuleFeature(),
-                  ]
-                },
-              }),
-              label: false,
-              required: true,
-            },
-          ],
-          label: 'Details',
-        },
-        {
-          name: 'meta',
-          label: 'SEO',
-          fields: [
-            OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: 'media',
-            }),
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-            }),
-          ],
-        },
-      ],
-    },
-    {
-      name: 'publishedAt',
-      type: 'date',
-      admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
-        },
-        position: 'sidebar',
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
-      },
+      defaultValue: true,
     },
     ...slugField(),
   ],

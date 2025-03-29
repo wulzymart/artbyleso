@@ -113,7 +113,7 @@ export default async function OrdersPage() {
                         {payment && (
                           <div className="flex justify-between">
                             <span className="font-medium">Transaction Id:</span>
-                            <span>{payment.transactionId}</span>
+                            <span>{payment.id}</span>
                           </div>
                         )}
                       </div>
@@ -158,8 +158,7 @@ export default async function OrdersPage() {
                           <TableHead>#</TableHead>
                           <TableHead>Artwork</TableHead>
                           <TableHead>Price</TableHead>
-                          <TableHead>Quantity</TableHead>
-                          <TableHead>Subtotal</TableHead>
+                          <TableHead>Version</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -184,8 +183,7 @@ export default async function OrdersPage() {
                                 )}
                               </TableCell>
                               <TableCell>₦{item.price.toFixed(2)}</TableCell>
-                              <TableCell>{item.quantity}</TableCell>
-                              <TableCell>₦{(item.price * item.quantity).toFixed(2)}</TableCell>
+                              <TableCell>{item.version}</TableCell>
                             </TableRow>
                           )
                         })}

@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import AddToCartButton from '@/components/works/add-to-cart-button'
 import { useCartStore } from '@/context/CartProvider'
 import { Artwork } from '@/payload-types'
@@ -7,20 +8,21 @@ import React from 'react'
 
 interface AddToCartButtonProps {
   isAvailable: boolean
-  quantity: number
   artwork: Artwork
+  isPrintVersion?: boolean
 }
 
-const ActionButton: React.FC<AddToCartButtonProps> = ({ isAvailable, quantity, artwork }) => {
-  const { addItem } = useCartStore((state) => state)
-  const handleAddToCart = (): void => {
-    console.log(`Added ${quantity} item(s) to cart`)
-    // Add cart functionality here
-  }
-
-  const handleRequestCopy = (): void => {
-    console.log('Requested a copy')
-    // Add request functionality here
+const ActionButton: React.FC<AddToCartButtonProps> = ({
+  isAvailable,
+  artwork,
+  isPrintVersion = false,
+}) => {
+  // Calculate the correct price based on whether print version is selected
+  const getPrice = () => {
+    if (isPrintVersion && artwork.printVersion) {
+      return artwork.printVersion.discountedPrice || artwork.printVersion.price || 0
+    }
+    return (artwork.discountedPrice || artwork.originalPrice)!
   }
 
   return (
@@ -29,16 +31,21 @@ const ActionButton: React.FC<AddToCartButtonProps> = ({ isAvailable, quantity, a
         <AddToCartButton
           className="mt-4 bg-amber-500 hover:bg-amber-600"
           artwork={artwork}
-          quantity={quantity}
-          price={artwork.price!}
+          price={getPrice()}
+          isPrintVersion={isPrintVersion}
+        />
+      ) : artwork.printVersion?.available ? (
+        <AddToCartButton
+          className="mt-4 bg-amber-500 hover:bg-amber-600"
+          artwork={artwork}
+          price={getPrice()}
+          isPrintVersion={true}
+          text="Get Print Version"
         />
       ) : (
-        <button
-          onClick={handleRequestCopy}
-          className="bg-amber-400 text-white py-3 px-6 rounded-md font-medium hover:bg-amber-900 w-full"
-        >
-          Request a Copy
-        </button>
+        <Button variant="outline" disabled>
+          Sold Out
+        </Button>
       )}
     </div>
   )

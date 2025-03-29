@@ -75,7 +75,7 @@ export interface Config {
     customers: Customer;
     payments: Payment;
     shipments: Shipment;
-    sales: Sale;
+    portfolios: Portfolio;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
@@ -88,6 +88,9 @@ export interface Config {
     collections: {
       artworks: 'artworks';
     };
+    customers: {
+      orders: 'orders';
+    };
   };
   collectionsSelect: {
     collections: CollectionsSelect<false> | CollectionsSelect<true>;
@@ -98,7 +101,7 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
     shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
-    sales: SalesSelect<false> | SalesSelect<true>;
+    portfolios: PortfoliosSelect<false> | PortfoliosSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -111,12 +114,10 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
-    header: Header;
-    footer: Footer;
+    sales: Sale;
   };
   globalsSelect: {
-    header: HeaderSelect<false> | HeaderSelect<true>;
-    footer: FooterSelect<false> | FooterSelect<true>;
+    sales: SalesSelect<false> | SalesSelect<true>;
   };
   locale: null;
   user:
@@ -291,43 +292,29 @@ export interface Media {
 export interface Artwork {
   id: string;
   title: string;
+  description?: string | null;
+  year?: number | null;
+  medium?: ('Acrylic' | 'Watercolor' | 'Oil-Painting' | 'Mixed-Media' | 'Digital-Art' | 'Other') | null;
+  dimensions: {
+    height: number;
+    width: number;
+    unit?: ('cm' | 'inches') | null;
+  };
+  originalPrice: number;
+  discountedPrice?: number | null;
+  discountPeriod?: {
+    startDate?: string | null;
+    endDate?: string | null;
+  };
+  printVersion?: {
+    available?: boolean | null;
+    price?: number | null;
+    discountedPrice?: number | null;
+  };
   collection?: (string | null) | Collection;
-  salesStatus?: ('available' | 'soldOut') | null;
-  price?: number | null;
-  availableInPrint?: boolean | null;
-  printPrice?: number | null;
-  mainDiscount?: boolean | null;
-  mainDiscountPrice?: number | null;
-  printDiscount?: boolean | null;
-  printDiscountPrice?: number | null;
-  images: {
-    image?: (string | null) | Media;
-    id?: string | null;
-  }[];
-  description: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
+  mainImage?: (string | null) | Media;
+  additionalImages?: (string | Media)[] | null;
+  inStock?: boolean | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -362,12 +349,19 @@ export interface Order {
   customer: string | Customer;
   items: {
     artwork: string | Artwork;
-    quantity: number;
+    version: 'Print' | 'Canvas';
     price: number;
     id?: string | null;
   }[];
   total: number;
   paymentStatus: 'paid' | 'pending';
+  shippingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
   shipping?: (string | null) | Shipment;
   paymentInfo?: (string | null) | Payment;
   updatedAt: string;
@@ -382,14 +376,22 @@ export interface Customer {
   firstName: string;
   lastName: string;
   phoneNumber?: string | null;
-  address?: string | null;
-  city?: string | null;
-  state?: string | null;
+  address: {
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
   /**
    * Mark customer as deleted (soft delete)
    */
   isDeleted?: boolean | null;
-  orders?: (string | Order)[] | null;
+  orders?: {
+    docs?: (string | Order)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   role: 'customer';
   updatedAt: string;
   createdAt: string;
@@ -431,24 +433,37 @@ export interface Shipment {
  */
 export interface Payment {
   id: string;
-  transactionId: string;
-  transactionRef: string;
-  amount: number;
-  currency: string;
   customer: string | Customer;
   order: string | Order;
+  gateway: 'paystack' | 'flutterwave';
+  paystackInfo?: {
+    message: string;
+    status: string;
+    reference: string;
+    trans?: string | null;
+    redirecturl?: string | null;
+    transaction?: string | null;
+    trxref?: string | null;
+  };
+  amount: number;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sales".
+ * via the `definition` "portfolios".
  */
-export interface Sale {
+export interface Portfolio {
   id: string;
-  from: string;
-  to: string;
-  percentage: number;
+  title: string;
+  description: string;
+  images: {
+    image: string | Media;
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  slug?: string | null;
+  slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -804,8 +819,8 @@ export interface PayloadLockedDocument {
         value: string | Shipment;
       } | null)
     | ({
-        relationTo: 'sales';
-        value: string | Sale;
+        relationTo: 'portfolios';
+        value: string | Portfolio;
       } | null)
     | ({
         relationTo: 'forms';
@@ -895,30 +910,35 @@ export interface CollectionsSelect<T extends boolean = true> {
  */
 export interface ArtworksSelect<T extends boolean = true> {
   title?: T;
-  collection?: T;
-  salesStatus?: T;
-  price?: T;
-  availableInPrint?: T;
-  printPrice?: T;
-  mainDiscount?: T;
-  mainDiscountPrice?: T;
-  printDiscount?: T;
-  printDiscountPrice?: T;
-  images?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
   description?: T;
-  meta?:
+  year?: T;
+  medium?: T;
+  dimensions?:
     | T
     | {
-        title?: T;
-        image?: T;
-        description?: T;
+        height?: T;
+        width?: T;
+        unit?: T;
       };
-  publishedAt?: T;
+  originalPrice?: T;
+  discountedPrice?: T;
+  discountPeriod?:
+    | T
+    | {
+        startDate?: T;
+        endDate?: T;
+      };
+  printVersion?:
+    | T
+    | {
+        available?: T;
+        price?: T;
+        discountedPrice?: T;
+      };
+  collection?: T;
+  mainImage?: T;
+  additionalImages?: T;
+  inStock?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1045,12 +1065,21 @@ export interface OrdersSelect<T extends boolean = true> {
     | T
     | {
         artwork?: T;
-        quantity?: T;
+        version?: T;
         price?: T;
         id?: T;
       };
   total?: T;
   paymentStatus?: T;
+  shippingAddress?:
+    | T
+    | {
+        address?: T;
+        city?: T;
+        state?: T;
+        country?: T;
+        postalCode?: T;
+      };
   shipping?: T;
   paymentInfo?: T;
   updatedAt?: T;
@@ -1064,9 +1093,15 @@ export interface CustomersSelect<T extends boolean = true> {
   firstName?: T;
   lastName?: T;
   phoneNumber?: T;
-  address?: T;
-  city?: T;
-  state?: T;
+  address?:
+    | T
+    | {
+        address?: T;
+        city?: T;
+        state?: T;
+        country?: T;
+        postalCode?: T;
+      };
   isDeleted?: T;
   orders?: T;
   role?: T;
@@ -1088,12 +1123,21 @@ export interface CustomersSelect<T extends boolean = true> {
  * via the `definition` "payments_select".
  */
 export interface PaymentsSelect<T extends boolean = true> {
-  transactionId?: T;
-  transactionRef?: T;
-  amount?: T;
-  currency?: T;
   customer?: T;
   order?: T;
+  gateway?: T;
+  paystackInfo?:
+    | T
+    | {
+        message?: T;
+        status?: T;
+        reference?: T;
+        trans?: T;
+        redirecturl?: T;
+        transaction?: T;
+        trxref?: T;
+      };
+  amount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1120,12 +1164,20 @@ export interface ShipmentsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sales_select".
+ * via the `definition` "portfolios_select".
  */
-export interface SalesSelect<T extends boolean = true> {
-  from?: T;
-  to?: T;
-  percentage?: T;
+export interface PortfoliosSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  slug?: T;
+  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1368,104 +1420,20 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header".
+ * via the `definition` "sales".
  */
-export interface Header {
+export interface Sale {
   id: string;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'collections';
-                value: string | Collection;
-              } | null)
-            | ({
-                relationTo: 'artworks';
-                value: string | Artwork;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  percentage?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer".
+ * via the `definition` "sales_select".
  */
-export interface Footer {
-  id: string;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'collections';
-                value: string | Collection;
-              } | null)
-            | ({
-                relationTo: 'artworks';
-                value: string | Artwork;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header_select".
- */
-export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer_select".
- */
-export interface FooterSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+export interface SalesSelect<T extends boolean = true> {
+  percentage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1486,52 +1454,6 @@ export interface TaskSchedulePublish {
     user?: (string | null) | User;
   };
   output?: unknown;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BannerBlock".
- */
-export interface BannerBlock {
-  style: 'info' | 'warning' | 'error' | 'success';
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'banner';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CodeBlock".
- */
-export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
-  code: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'code';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
- */
-export interface MediaBlock {
-  media: string | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

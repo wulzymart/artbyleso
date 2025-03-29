@@ -51,32 +51,45 @@ export const Footer = () => {
               </li>
             </ul>
           </div>
+          {/* Policy */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">Policy</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-and-conditions"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/shipping-policy"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Shipping Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           {/* Contact */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-gray-400">Email: info@lesooriginals.com</li>
-              <li className="text-gray-400">Phone: +1 (123) 456-7890</li>
+              <li className="text-gray-400">Email: lesovilla26@gmail.com </li>
+              <li className="text-gray-400">Phone: +234 (911) 261-2216</li>
+              <li className="text-gray-400">34 Kings avenue, ojodu Lagos, Nigeria</li>
             </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Newsletter</h3>
-            <p className="text-sm text-gray-400">
-              Subscribe to get updates on new collections and events.
-            </p>
-            <form className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="Your email"
-                className="bg-white/10 border-none text-white placeholder:text-gray-400"
-              />
-              <Button type="submit" variant="secondary">
-                <Mail size={16} />
-              </Button>
-            </form>
           </div>
         </div>
 
@@ -95,7 +108,7 @@ export const Footer = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-400">
-              © {new Date().getFullYear()} Art by Leso. All rights reserved.
+              © {new Date().getFullYear()} Leso Originals. All rights reserved.
             </p>
           </div>
         </div>

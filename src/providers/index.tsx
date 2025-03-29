@@ -4,6 +4,7 @@ import { HeaderThemeProvider } from './HeaderTheme'
 import { ThemeProvider } from './Theme'
 import { CartStoreProvider } from '@/context/CartProvider'
 import { AuthProvider } from '@/context/authContext'
+import { SalesProvider } from '@/context/sales_checker'
 
 export const Providers: React.FC<{
   children: React.ReactNode
@@ -11,9 +12,11 @@ export const Providers: React.FC<{
   return (
     <ThemeProvider>
       <AuthProvider>
-        <CartStoreProvider>
-          <HeaderThemeProvider>{children}</HeaderThemeProvider>
-        </CartStoreProvider>
+        <SalesProvider>
+          <CartStoreProvider>
+            <HeaderThemeProvider>{children}</HeaderThemeProvider>
+          </CartStoreProvider>
+        </SalesProvider>
       </AuthProvider>
     </ThemeProvider>
   )

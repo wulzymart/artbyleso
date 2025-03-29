@@ -1,11 +1,9 @@
 import { isAdminOrSelf } from '@/access/roleBasedAccess'
+import { redirect } from 'next/dist/server/api-utils'
 import { CollectionConfig } from 'payload'
 
 export const Payments: CollectionConfig = {
   slug: 'payments',
-  admin: {
-    useAsTitle: 'transactionId',
-  },
   access: {
     read: isAdminOrSelf,
     update: () => false,
@@ -13,26 +11,6 @@ export const Payments: CollectionConfig = {
     create: () => false,
   },
   fields: [
-    {
-      name: 'transactionId',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'transactionRef',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      name: 'currency',
-      type: 'text',
-      required: true,
-    },
     {
       name: 'customer',
       type: 'relationship',
@@ -43,6 +21,66 @@ export const Payments: CollectionConfig = {
       name: 'order',
       type: 'relationship',
       relationTo: 'orders',
+      required: true,
+    },
+    {
+      name: 'gateway',
+      type: 'select',
+      required: true,
+      options: [
+        { label: 'Paystack', value: 'paystack' },
+        { label: 'Flutterwave', value: 'flutterwave' },
+      ],
+    },
+    {
+      name: 'paystackInfo',
+      type: 'group',
+      admin: {
+        condition: (data, siblingData, { user }) => {
+          return siblingData?.gateway === 'paystack'
+        },
+      },
+      fields: [
+        {
+          name: 'message',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'status',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'reference',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'trans',
+          type: 'text',
+        },
+        {
+          name: 'redirecturl',
+          type: 'text',
+        },
+        {
+          name: 'transaction',
+          type: 'text',
+        },
+        {
+          name: 'trxref',
+          type: 'text',
+        },
+      ],
+    },
+    // {
+    //   name: 'flutterwaveInfo',
+    // },
+
+    {
+      name: 'amount',
+      type: 'number',
       required: true,
     },
   ],

@@ -73,15 +73,23 @@ export default async function AccountPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="font-medium">Address:</span>
-                <span className="truncate max-w-[200px]">{customer.address || 'Not provided'}</span>
+                <span className="truncate max-w-[200px]">
+                  {customer.address.address || 'Not provided'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Postal code:</span>
+                <span className="truncate max-w-[200px]">
+                  {customer.address.postalCode || 'Not provided'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">City:</span>
-                <span>{customer.city || 'Not provided'}</span>
+                <span>{customer.address.city || 'Not provided'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">State:</span>
-                <span>{customer.state || 'Not provided'}</span>
+                <span>{customer.address.state || 'Not provided'}</span>
               </div>
             </div>
           </CardContent>
@@ -134,7 +142,9 @@ export default async function AccountPage() {
                   {orders.map((order, index) => {
                     // Get the shipping status from the order's shipping relationship
                     const shipmentStatus =
-                      typeof order.shipping === 'object' ? order.shipping.shippingStatus : 'pending'
+                      typeof order.shipping === 'object'
+                        ? order.shipping?.shippingStatus
+                        : 'pending'
 
                     return (
                       <TableRow key={order.id}>

@@ -33,7 +33,7 @@ export async function getCurrentCustomer() {
   if (!token) {
     return null
   }
-  const {user} = await payload.auth({
+  const { user } = await payload.auth({
     headers: await headers(),
   })
   if (!user || user.role !== 'customer') {

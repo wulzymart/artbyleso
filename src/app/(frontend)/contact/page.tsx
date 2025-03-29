@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { ContactForm } from '@/components/contact/contact-form'
 import { FaPhone, FaEnvelope, FaInstagram, FaTwitter, FaFacebook, FaLinkedin } from 'react-icons/fa'
 import Link from 'next/link'
+import { LocateIcon } from 'lucide-react'
 
 export default function ContactPage() {
   return (
@@ -39,14 +40,13 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             <div className="bg-black/20 p-8 rounded-lg border-l-4 border-amber-500 flex flex-col animate-pulse hover:animate-none items-center text-center">
               <div className="bg-amber-500/20 p-4 rounded-full mb-4">
                 <FaPhone className="text-3xl text-amber-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Phone</h3>
-              <p className="mb-2">+234 803 123 4567</p>
-              <p>+234 905 678 9012</p>
+              <p className="mb-2">+234 911 261 2216</p>
             </div>
 
             <div className="bg-black/20 p-8 rounded-lg border-l-4 border-amber-500 flex flex-col animate-pulse hover:animate-none items-center text-center">
@@ -54,8 +54,14 @@ export default function ContactPage() {
                 <FaEnvelope className="text-3xl text-amber-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Email</h3>
-              <p className="mb-2">contact@lesooriginals.com</p>
-              <p>info@lesooriginals.com</p>
+              <p className="mb-2">Lesovilla26@gmail.com </p>
+            </div>
+            <div className="bg-black/20 p-8 rounded-lg border-l-4 border-amber-500 flex flex-col animate-pulse hover:animate-none items-center text-center">
+              <div className="bg-amber-500/20 p-4 rounded-full mb-4">
+                <LocateIcon className="text-3xl text-amber-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Store Address</h3>
+              <p className="mb-2">34 Kings avenue, ojodu Lagos, Nigeria</p>
             </div>
 
             <div className="bg-black/20 p-8 rounded-lg border-l-4 border-amber-500 flex flex-col animate-pulse hover:animate-none items-center text-center">

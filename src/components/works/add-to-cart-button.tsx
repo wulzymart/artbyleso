@@ -7,18 +7,18 @@ import { useCartStore } from '@/context/CartProvider'
 const AddToCartButton = ({
   className,
   artwork,
-  quantity = 1,
-  price,
+  isPrintVersion = false,
+  text = 'Add to Cart',
 }: {
   className: string
   artwork: Artwork
-  quantity?: number
-  price: number
+  isPrintVersion?: boolean
+  text?: string
 }) => {
   const { addItem } = useCartStore((state) => state)
   return (
-    <Button className={className} onClick={() => addItem(artwork.id, artwork, price, quantity)}>
-      Add to Cart
+    <Button className={className} onClick={() => addItem(artwork.id, artwork, isPrintVersion)}>
+      {text}
     </Button>
   )
 }

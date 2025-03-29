@@ -5,7 +5,10 @@ import { ParallaxSection } from '@/components/ui/parallax-section'
 
 export default async function CollectionsPage() {
   const payload = await getPayload({ config })
-  const { docs: collections } = await payload.find({ collection: 'collections' })
+  const { docs: collections } = await payload.find({
+    collection: 'collections',
+    sort: '-createdAt',
+  })
 
   return (
     <div className="min-h-screen text-gray-700">

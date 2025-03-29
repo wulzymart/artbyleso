@@ -1,32 +1,19 @@
 import { isAdminOrSuperAdmin } from '@/access/roleBasedAccess'
-import { CollectionConfig } from 'payload'
+import { CollectionConfig, GlobalConfig } from 'payload'
 
-export const Sales: CollectionConfig<'sales'> = {
+export const Sales: GlobalConfig = {
   slug: 'sales',
   access: {
-    create: isAdminOrSuperAdmin,
-    delete: isAdminOrSuperAdmin,
     read: () => true,
     update: isAdminOrSuperAdmin,
   },
   fields: [
     {
-      name: 'from',
-      label: 'Starts',
-      type: 'date',
-      required: true,
-    },
-    {
-      name: 'to',
-      label: 'Ends',
-      type: 'date',
-      required: true,
-    },
-    {
       name: 'percentage',
       label: 'Percentage (%)',
       type: 'number',
-      required: true,
+      defaultValue: 0,
+      required: false,
     },
   ],
 }

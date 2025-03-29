@@ -56,11 +56,17 @@ const Orders: CollectionConfig = {
           required: true,
         },
         {
-          name: 'quantity',
-          type: 'number',
+          name: 'version',
+          label: 'Version',
+          type: 'select',
           required: true,
-          min: 1,
-          defaultValue: 1,
+          options: [
+            { label: 'Print', value: 'Print' },
+            {
+              label: 'Canvas',
+              value: 'Canvas',
+            },
+          ],
         },
         {
           name: 'price',
@@ -84,6 +90,38 @@ const Orders: CollectionConfig = {
         {
           label: 'Pending',
           value: 'pending',
+        },
+      ],
+    },
+    {
+      name: 'shippingAddress',
+      label: 'Shipping Address',
+      type: 'group',
+      fields: [
+        {
+          name: 'address',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'city',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'state',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'country',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'postalCode',
+          type: 'text',
+          required: true,
         },
       ],
     },

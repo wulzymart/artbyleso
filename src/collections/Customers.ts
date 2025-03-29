@@ -28,7 +28,7 @@ const Customers: CollectionConfig = {
     cart: true,
   },
   access: {
-    admin: () => false,
+    update: () => false,
     // Admins can read all customers, customers can only read themselves
     read: isAdminOrSelf,
     // Admins can create customers
@@ -40,7 +40,6 @@ const Customers: CollectionConfig = {
       return isAdminOrSuperAdmin({ req })
     },
     // Admins can update any customer, customers can only update themselves
-    update: isAdminOrSelf,
     // Only admins can truly delete customers
     delete: canManageCustomers,
   },
@@ -56,11 +55,18 @@ const Customers: CollectionConfig = {
       required: true,
     },
     { name: 'phoneNumber', type: 'text', label: 'Phone Number' },
-    { name: 'address', type: 'text', label: 'Address' },
-    { name: 'city', type: 'text', label: 'City' },
-    { name: 'state', type: 'text', label: 'State' },
-    // {name: 'country', type: 'text', label: 'Country'},
-    // {name: 'zipCode', type: 'text', label: 'Zip Code'},
+    {
+      name: 'address',
+      label: 'Address',
+      type: 'group',
+      fields: [
+        { name: 'address', type: 'text', label: 'Address', required: true },
+        { name: 'city', type: 'text', label: 'City', required: true },
+        { name: 'state', type: 'text', label: 'State', required: true },
+        { name: 'country', type: 'text', label: 'Country', required: true },
+        { name: 'postalCode', type: 'text', label: 'Postal Code', required: true },
+      ],
+    },
     {
       name: 'isDeleted',
       type: 'checkbox',
@@ -75,9 +81,9 @@ const Customers: CollectionConfig = {
     },
     {
       name: 'orders',
-      type: 'relationship',
-      relationTo: 'orders',
-      hasMany: true,
+      type: 'join',
+      collection: 'orders',
+      on: 'customer',
     },
     {
       name: 'role',

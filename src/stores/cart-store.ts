@@ -2,11 +2,12 @@ import { Artwork } from '@/payload-types'
 import { Item } from '@radix-ui/react-select'
 import { createStore } from 'zustand/vanilla'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { toast } from 'sonner'
+import { getCurrentPrice } from '@/utilities/calc-price'
 export interface CartItem {
   artwork: Artwork
-  quantity: number
-  price: number
   id: string
+  isPrintVersion?: boolean
 }
 export type CartState = {
   items: CartItem[]
@@ -15,13 +16,11 @@ export const initCartStore = (): CartState => {
   return { items: [] }
 }
 export type CartActions = {
-  decreaseQuantity: (id: string) => void
-  increaseQuantity: (id: string) => void
-  addItem: (id: string, artwork: Artwork, price: number, quantity: number) => void
+  addItem: (id: string, artwork: Artwork, isPrintVersion?: boolean) => void
   removeItem: (id: string) => void
   clearCart: () => void
   getCount: () => number
-  getCartTotal: () => number
+  getCartTotal: (sales?: number) => number
 }
 
 export type CartStore = CartState & CartActions
@@ -35,41 +34,31 @@ export const createCartStore = (initState: CartState = defaultInitState) => {
     persist(
       (set, get) => ({
         ...initState,
-        decreaseQuantity: (id) =>
-          set((state) => ({
-            items: state.items.map((item) => {
-              if (id === item.id && item.quantity! > 1) item.quantity--
-              return item
-            }),
-          })),
-        increaseQuantity: (id) =>
-          set((state) => {
-            debugger
-            return {
-              items: state.items.map((item) => {
-                if (id === item.id && item.artwork.quantity! >= item.quantity + 1) item.quantity++
-                return item
-              }),
-            }
-          }),
-        addItem: (id, artwork, price, quantity = 1) =>
+        addItem: (id, artwork, isPrintVersion = false) =>
           set(({ items }) => {
-            const foundItem = items.findIndex((item) => item.id === id)
+            // Create a unique ID that includes whether it's a print version
+            const itemId = isPrintVersion ? `${id}-print` : id
+
+            const foundItem = items.findIndex((item) => item.id === itemId)
             if (foundItem != -1) {
-              const initQuantity = items[foundItem]!.quantity
-              if (initQuantity + quantity <= artwork.quantity!)
-                items[foundItem]!.quantity += quantity
-              else items[foundItem]!.quantity = artwork.quantity!
+              toast.error('Artwork already in cart')
               return { items }
             }
-            return { items: [...items, { id, artwork, price, quantity }] }
+            return { items: [...items, { id: itemId, artwork, isPrintVersion }] }
           }),
         removeItem: (id) =>
           set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
         clearCart: () => set(() => ({ items: [] })),
-        getCount: () => get().items.reduce((count, item) => count + item.quantity, 0),
-        getCartTotal: () =>
-          get().items.reduce((total, item) => total + item.quantity * item.price, 0),
+        getCount: () => get().items.length,
+        getCartTotal: (sales?: number) =>
+          get().items.reduce((total, { artwork, isPrintVersion }) => {
+            const { originalPrice, discountedPrice } = getCurrentPrice(
+              artwork,
+              isPrintVersion,
+              sales,
+            )
+            return total + (discountedPrice || originalPrice)
+          }, 0),
       }),
       { name: 'cart' },
     ),

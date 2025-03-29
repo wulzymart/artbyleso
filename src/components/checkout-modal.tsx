@@ -10,7 +10,6 @@ import { useCartStore } from '@/context/CartProvider'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { addOrder } from '@/context/helper/actions/order'
 import {
   Dialog,
   DialogContent,
@@ -22,17 +21,15 @@ import {
 } from '@/components/ui/dialog'
 import { FlutterWaveButton, closePaymentModal, useFlutterwave } from 'flutterwave-react-v3'
 import { FlutterwaveConfig, InitializeFlutterwavePayment } from 'flutterwave-react-v3/dist/types'
-
+import { PaystackButton } from 'react-paystack'
+const config = {
+  reference: new Date().getTime().toString(),
+  email: 'user@example.com',
+  amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+  publicKey: 'pk_test_ea7859c1ea0371d26519257a951df1484aeab59c',
+}
 export const CheckoutModal = () => {
-  const {
-    items,
-    removeItem,
-    increaseQuantity,
-    decreaseQuantity,
-    getCount,
-    clearCart,
-    getCartTotal,
-  } = useCartStore((state) => state)
+  const { items, removeItem, getCount, clearCart, getCartTotal } = useCartStore((state) => state)
   const count = getCount()
   const cartTotal = getCartTotal()
   const { isAuthenticated, user } = useAuth()
@@ -42,72 +39,86 @@ export const CheckoutModal = () => {
   if (!isAuthenticated || !user) {
     return null
   }
+  const handlePaystackSuccessAction = (reference: any) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log(reference)
+  }
+  const handlePaystackCloseAction = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log('closed')
+  }
+  const componentProps = {
+    ...config,
+    text: 'Paystack Button Implementation',
+    onSuccess: (reference: any) => handlePaystackSuccessAction(reference),
+    onClose: handlePaystackCloseAction,
+  }
   console.log(process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!)
 
-  const config: FlutterwaveConfig = {
-    public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
-    tx_ref: Date.now().toLocaleString(),
-    currency: 'NGN',
-    amount: cartTotal,
-    payment_options: 'card,mobilemoney,ussd',
-    customer: {
-      email: user.email,
-      phone_number: user.phoneNumber!,
-      name: `${user.firstName} ${user.lastName}`,
-    },
-    customizations: {
-      title: 'Leso Originals',
-      description: 'Payment for artworks in cart',
-      logo: '/logo.png',
-    },
-  }
+  // const config: FlutterwaveConfig = {
+  //   public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
+  //   tx_ref: Date.now().toLocaleString(),
+  //   currency: 'NGN',
+  //   amount: cartTotal,
+  //   payment_options: 'card,mobilemoney,ussd',
+  //   customer: {
+  //     email: user.email,
+  //     phone_number: user.phoneNumber!,
+  //     name: `${user.firstName} ${user.lastName}`,
+  //   },
+  //   customizations: {
+  //     title: 'Leso Originals',
+  //     description: 'Payment for artworks in cart',
+  //     logo: '/logo.png',
+  //   },
+  // }
 
-  const fwConfig: FlutterwaveConfig & InitializeFlutterwavePayment & { text: string } = {
-    ...config,
-    text: 'Pay with Flutterwave!',
-    callback: (response) => {
-      console.log(response)
-      closePaymentModal() // this will close the modal programmatically
-    },
-    onClose: () => {},
-  }
-  const handleFlutterPayment = useFlutterwave(config)
-  const checkOut = () => {
-    if (isAuthenticated) {
-      setIsProcessing(true)
-      handleFlutterPayment({
-        callback: (response) => {
-          console.log(response)
-          closePaymentModal() // this will close the modal programmatically
-        },
-        onClose: () => {},
-      })
-      // Implement the checkout logic here
-      startTransition(async () => {
-        // const order = await addOrder(items)
-        // if (!order) {
-        //   toast('Something went wrong', {
-        //     description: 'Something went wrong',
-        //     className: 'bg-red-500',
-        //     descriptionClassName: 'text-white',
-        //   })
-        //   setIsProcessing(false)
-        //   return
-        // }
-        // toast.success('Order created, proceed to payment')
-        // clearCart()
-        // setIsOpen(false)
-        // router.push(`/orders/${order.id}`)
-      })
-    } else {
-      toast('Please login to checkout', {
-        description: 'Please login to checkout',
-        className: 'bg-red-500',
-        descriptionClassName: 'text-white',
-      })
-      router.push('/account/login')
-    }
-  }
+  // const fwConfig: FlutterwaveConfig & InitializeFlutterwavePayment & { text: string } = {
+  //   ...config,
+  //   text: 'Pay with Flutterwave!',
+  //   callback: (response) => {
+  //     console.log(response)
+  //     closePaymentModal() // this will close the modal programmatically
+  //   },
+  //   onClose: () => {},
+  // }
+  // const handleFlutterPayment = useFlutterwave(config)
+  // const checkOut = () => {
+  //   if (isAuthenticated) {
+  //     setIsProcessing(true)
+  //     handleFlutterPayment({
+  //       callback: (response) => {
+  //         console.log(response)
+  //         closePaymentModal() // this will close the modal programmatically
+  //       },
+  //       onClose: () => {},
+  //     })
+  //     // Implement the checkout logic here
+  //     startTransition(async () => {
+  //       // const order = await addOrder(items)
+  //       // if (!order) {
+  //       //   toast('Something went wrong', {
+  //       //     description: 'Something went wrong',
+  //       //     className: 'bg-red-500',
+  //       //     descriptionClassName: 'text-white',
+  //       //   })
+  //       //   setIsProcessing(false)
+  //       //   return
+  //       // }
+  //       // toast.success('Order created, proceed to payment')
+  //       // clearCart()
+  //       // setIsOpen(false)
+  //       // router.push(`/orders/${order.id}`)
+  //     })
+  //   } else {
+  //     toast('Please login to checkout', {
+  //       description: 'Please login to checkout',
+  //       className: 'bg-red-500',
+  //       descriptionClassName: 'text-white',
+  //     })
+  //     router.push('/account/login')
+  //   }
+  // }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -140,7 +151,7 @@ export const CheckoutModal = () => {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       <div className="size-16 relative">
-                        <Media resource={item.artwork.images[0]?.image!} fill />
+                        <Media resource={item.artwork.mainImage} fill />
                       </div>
 
                       <div className="flex-1 flex flex-col md:flex-row items-center max-sm:items-start md:gap-4">
@@ -149,23 +160,7 @@ export const CheckoutModal = () => {
                           <p className="text-sm">₦{item.price}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button
-                            onClick={() => decreaseQuantity(item.id)}
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <ArrowLeft className="size-3" />
-                          </Button>
-                          <p className="text-sm">{item.quantity}</p>
-                          <Button
-                            onClick={() => increaseQuantity(item.id)}
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <ArrowRight className="size-3" />
-                          </Button>
+                          <p className="text-sm">{item.isPrintVersion ? 'Print' : 'Canvas'}</p>
                         </div>
                         <Button
                           variant="destructive"
@@ -226,13 +221,14 @@ export const CheckoutModal = () => {
             Cancel
           </Button>
           {count > 0 && (
-            <Button
-              className="bg-amber-500 hover:bg-amber-600 text-white"
-              onClick={checkOut}
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Processing...' : 'Proceed to Payment'}
-            </Button>
+            <PaystackButton {...componentProps} />
+            // <Button
+            //   className="bg-amber-500 hover:bg-amber-600 text-white"
+            //   onClick={checkOut}
+            //   disabled={isProcessing}
+            // >
+            //   {isProcessing ? 'Processing...' : 'Proceed to Payment'}
+            // </Button>
           )}
         </DialogFooter>
       </DialogContent>

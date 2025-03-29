@@ -7,11 +7,10 @@ import { useAuth } from '@/context/authContext'
 import AccountSummary from './account-summary'
 
 const AccountAccess = () => {
-  const { user, isAuthenticated } = useAuth()
-  console.log(user, isAuthenticated)
+  const { isAuthenticated } = useAuth()
 
   return isAuthenticated ? (
-    <AccountSummary customer={user!} />
+    <AccountSummary />
   ) : (
     <div className="flex flex-col w-sm h-full gap-6 items-center justify-center">
       <div className="w-[90%] mx-auto">

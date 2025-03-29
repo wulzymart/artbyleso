@@ -9,10 +9,7 @@ import { motion } from 'framer-motion'
 import AddToCartButton from './add-to-cart-button'
 
 const ArtworkCardParallax = ({ artwork }: { artwork: Artwork }) => {
-  const { title, images, quantity, price } = artwork
-  const image = images[0]?.image
-
-  if (typeof image === 'string') throw new Error('Image is not available')
+  const { title, inStock, mainImage, medium, dimensions, printVersion } = artwork
 
   return (
     <motion.div
@@ -26,7 +23,7 @@ const ArtworkCardParallax = ({ artwork }: { artwork: Artwork }) => {
       <Link href={`/artworks/${artwork.slug}`} className="block">
         <div className="relative w-full h-[550px] overflow-hidden group">
           <MediaComponent
-            resource={image}
+            resource={mainImage}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -40,20 +37,20 @@ const ArtworkCardParallax = ({ artwork }: { artwork: Artwork }) => {
             transition={{ duration: 0.3, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            ₦{price}
+            ₦{artwork.discountedPrice || artwork.originalPrice}
           </motion.div>
 
           {/* Availability badge */}
           <div
-            className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium z-10 ${quantity ? 'bg-yellow-100/40 text-white' : 'bg-red-500/40 text-white'}`}
+            className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium z-10 ${inStock ? 'bg-yellow-100/40 text-white' : 'bg-red-500/40 text-white'}`}
           >
-            {quantity ? 'Available' : 'Sold Out'}
+            {inStock ? 'Available' : 'Sold Out'}
           </div>
         </div>
 
-        <div className="p-6 ">
+        <div className="p-6">
           <motion.h2
-            className="text-xl font-semibold text-gray-600  text-center  mb-2 line-clamp-1"
+            className="text-xl font-semibold text-gray-600 text-center mb-2 line-clamp-1"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -63,25 +60,33 @@ const ArtworkCardParallax = ({ artwork }: { artwork: Artwork }) => {
           </motion.h2>
 
           <motion.div
-            className="flex justify-center items-center mt-4"
+            className="flex flex-col items-center gap-2 mt-2"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <span className="text-gray-400 text-sm">
-              {quantity ? `${quantity} in stock` : 'Out of stock'}
+            {medium && <span className="text-gray-500 text-sm">{medium}</span>}
+            {dimensions && (
+              <span className="text-gray-500 text-sm">
+                {dimensions.width} × {dimensions.height} {dimensions.unit}
+              </span>
+            )}
+            {printVersion?.available && (
+              <span className="text-amber-600 text-sm font-medium">Print version available</span>
+            )}
+            <span className="text-gray-400 text-sm mt-1">
+              {inStock ? 'Available' : 'Out of stock'}
             </span>
           </motion.div>
         </div>
       </Link>
 
-      {quantity ? (
+      {inStock ? (
         <div className="px-6 pb-6">
           <AddToCartButton
             className="w-full bg-amber-600 hover:bg-amber-700 text-white transition-all duration-300 transform hover:scale-105"
             artwork={artwork}
-            price={price!}
           />
         </div>
       ) : null}

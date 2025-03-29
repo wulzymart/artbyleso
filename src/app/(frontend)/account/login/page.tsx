@@ -13,6 +13,12 @@ export default function LoginPage() {
         </Link>
         <LoginForm />
       </div>
+      <p className="text-sm text-muted-foreground">
+        Dont have an account?{' '}
+        <Link href="/account/sign-up" className="text-primary">
+          Sign up here
+        </Link>
+      </p>
     </div>
   )
 }

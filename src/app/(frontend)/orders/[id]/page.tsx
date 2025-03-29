@@ -99,7 +99,7 @@ export default async function OrderPage({ params }: Args) {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium">Transaction ID:</span>
-                  <span className="truncate max-w-[200px]">{payment.transactionId || 'N/A'}</span>
+                  <span className="truncate max-w-[200px]">{payment.id || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Payment Date:</span>
@@ -145,7 +145,11 @@ export default async function OrderPage({ params }: Args) {
               </div>
             ) : (
               <div className="text-center py-4">
-                <p className="text-gray-500">No shipment information available</p>
+                <p className="text-gray-500">
+                  {order.paymentStatus === 'paid'
+                    ? 'Payment Acknowledged, Order will be shipped soon'
+                    : 'No shipment information available'}
+                </p>
               </div>
             )}
           </CardContent>
@@ -165,8 +169,7 @@ export default async function OrderPage({ params }: Args) {
                   <TableHead>#</TableHead>
                   <TableHead>Artwork</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Subtotal</TableHead>
+                  <TableHead>Version</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -191,8 +194,7 @@ export default async function OrderPage({ params }: Args) {
                         )}
                       </TableCell>
                       <TableCell>₦{item.price.toFixed(2)}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>₦{(item.price * item.quantity).toFixed(2)}</TableCell>
+                      <TableCell>{item.version}</TableCell>
                     </TableRow>
                   )
                 })}

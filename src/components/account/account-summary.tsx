@@ -3,12 +3,28 @@
 import { useEffect, useState } from 'react'
 import { Customer, Order } from '@/payload-types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '../ui/button'
+import { useAuth } from '@/context/authContext'
+import { SheetClose } from '../ui/sheet'
 
-interface AccountSummaryProps {
-  customer?: Customer
-}
-
-const AccountSummary: React.FC<AccountSummaryProps> = ({ customer }) => {
+const AccountSummary = () => {
+  const { logout, user } = useAuth()
+  const customer = user
+    ? {
+        id: user.id,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phoneNumber: user.phoneNumber || '',
+        address: {
+          address: user.address?.address || '',
+          city: user.address?.city || '',
+          state: user.address?.state || '',
+          country: user.address?.country || '',
+          postalCode: user.address?.postalCode || '',
+        },
+      }
+    : null
   const [orders, setOrders] = useState<Order[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -17,7 +33,9 @@ const AccountSummary: React.FC<AccountSummaryProps> = ({ customer }) => {
       if (!customer?.id) return
 
       try {
-        const response = await fetch(`/api/orders?where[customer][equals]=${customer.id}`)
+        const response = await fetch(`/api/orders?where[customer][equals]=${customer.id}`, {
+          credentials: 'include',
+        })
         if (response.ok) {
           const data = await response.json()
           setOrders(data.docs || [])
@@ -82,13 +100,19 @@ const AccountSummary: React.FC<AccountSummaryProps> = ({ customer }) => {
           <CardContent>
             <div className="grid grid-cols-2 gap-2">
               <div className="text-sm font-medium">Address:</div>
-              <div className="text-sm">{customer.address || 'Not provided'}</div>
+              <div className="text-sm">{customer.address.address || 'Not provided'}</div>
 
               <div className="text-sm font-medium">City:</div>
-              <div className="text-sm">{customer.city || 'Not provided'}</div>
+              <div className="text-sm">{customer.address.city || 'Not provided'}</div>
 
               <div className="text-sm font-medium">State:</div>
-              <div className="text-sm">{customer.state || 'Not provided'}</div>
+              <div className="text-sm">{customer.address.state || 'Not provided'}</div>
+
+              <div className="text-sm font-medium">Country:</div>
+              <div className="text-sm">{customer.address.country || 'Not provided'}</div>
+
+              <div className="text-sm font-medium">Postal Code:</div>
+              <div className="text-sm">{customer.address.postalCode || 'Not provided'}</div>
             </div>
           </CardContent>
         </Card>
@@ -115,6 +139,13 @@ const AccountSummary: React.FC<AccountSummaryProps> = ({ customer }) => {
             </div>
           </CardContent>
         </Card>
+        <div className="full flex justify-end">
+          <SheetClose asChild>
+            <Button className="cursor-pointer" onClick={logout} variant="destructive">
+              Sign Out
+            </Button>
+          </SheetClose>
+        </div>
       </div>
     </div>
   )

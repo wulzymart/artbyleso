@@ -20,7 +20,7 @@ const FeatureCard = ({ title, bgUrl, link, index }: FeatureCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
       viewport={{ once: true, margin: '-100px' }}
-      className="relative group overflow-hidden rounded-xl h-[600px] w-full shadow-xl"
+      className="relative group overflow-hidden rounded-xl h-[600px] w-sm shadow-xl"
     >
       <div className="absolute inset-0 w-full h-full bg-black/20 group-hover:bg-black/40 transition-all duration-500 z-10" />
 
@@ -99,7 +99,7 @@ export default function FeaturesParallax() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="flex flex-wrap justify-center gap-8">
         {features.map((feature, index) => (
           <FeatureCard
             key={index}

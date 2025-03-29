@@ -119,16 +119,20 @@ const NavigationMenu = () => {
             <Sheet>
               <SheetTrigger asChild>
                 <Button
+                  suppressHydrationWarning
                   variant="ghost"
                   size="icon"
                   className="relative p-2 rounded-full hover:bg-opacity-20"
                 >
                   <ShoppingCart size={20} className="text-gray-700 hover:text-gray-900" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 text-xs font-bold rounded-full  bg-red-500 text-white">
+                  {cartCount > 0 ? (
+                    <span
+                      suppressHydrationWarning
+                      className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 text-xs font-bold rounded-full  bg-red-500 text-white"
+                    >
                       {cartCount}
                     </span>
-                  )}
+                  ) : null}
                 </Button>
               </SheetTrigger>
               <SheetContent side="top">

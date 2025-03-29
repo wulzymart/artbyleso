@@ -7,10 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 interface ImageGalleryProps {
   images: Media[]
-  title: string
 }
 
-const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => {
+const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   const [currentImage, setCurrentImage] = useState<number>(0)
 
   const nextImage = (): void => {

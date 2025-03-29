@@ -38,19 +38,13 @@ export default async function CollectionPage({ params }: Args) {
         if (typeof work === 'string') throw new Error('Invalid artwork')
         return work
       })
-      .map(async (work) => ({
-        ...work,
-        images: await Promise.all(
-          work.images?.map(async (image) => {
-            const img = await payload.findByID({
-              collection: 'media',
-              id: image.image as string,
-            })
-
-            return { ...image, image: img }
-          }),
-        ).then((values) => values),
-      }))
+      .map((artwork) => {
+        return payload.findByID({
+          collection: 'artworks',
+          id: artwork.id,
+          depth: 2,
+        })
+      })
   const worksPromise = await getWorks()
   const works = await Promise.all(worksPromise!.map((p) => p.then((v) => v)))
 
