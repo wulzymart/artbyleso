@@ -1,10 +1,29 @@
-'use client'
-
 import Image from 'next/image'
 import { ContactForm } from '@/components/contact/contact-form'
 import { FaPhone, FaEnvelope, FaInstagram, FaTwitter, FaFacebook, FaLinkedin } from 'react-icons/fa'
 import Link from 'next/link'
 import { LocateIcon } from 'lucide-react'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+
+export const metadata: Metadata = {
+  title: 'Contact Us | Leso Originals',
+  description:
+    'Get in touch with Leso Originals for partnerships, workshops, trainings, consultations, and mentorship. Contact us via phone, email, or social media.',
+  openGraph: mergeOpenGraph({
+    title: 'Contact Us | Leso Originals',
+    description:
+      'Get in touch with Leso Originals for partnerships, workshops, trainings, consultations, and mentorship.',
+    images: [
+      {
+        url: '/leso.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Leso Originals Contact',
+      },
+    ],
+  }),
+}
 
 export default function ContactPage() {
   return (

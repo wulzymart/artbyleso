@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Button } from '@/components/ui/button'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -14,6 +16,24 @@ import {
 } from '@/components/ui/pagination'
 import ArtworksListParallax from '@/components/works/artworks-list-parallax'
 import { ParallaxSection } from '@/components/ui/parallax-section'
+
+export const metadata: Metadata = {
+  title: 'Artworks | Leso Originals',
+  description:
+    'Browse our collection of unique contemporary artworks by Oluwatosin Ayeleso. Discover vibrant paintings and mixed media art inspired by African culture.',
+  openGraph: mergeOpenGraph({
+    title: 'Artworks | Leso Originals',
+    description: 'Browse our collection of unique contemporary artworks by Oluwatosin Ayeleso.',
+    images: [
+      {
+        url: '/art1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Leso Originals Artworks',
+      },
+    ],
+  }),
+}
 type Args = {
   params: Promise<{}>
   searchParams: Promise<{ page?: string }>

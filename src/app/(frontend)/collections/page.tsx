@@ -1,7 +1,28 @@
 import { getPayload } from 'payload'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import config from '@payload-config'
 import CollectionCardParallax from '@/components/works/collection-card-parallax'
 import { ParallaxSection } from '@/components/ui/parallax-section'
+
+export const metadata: Metadata = {
+  title: 'Art Collections | Leso Originals',
+  description:
+    'Explore our curated collections of unique artworks that showcase African culture and heritage. Browse themed art collections by Oluwatosin Ayeleso.',
+  openGraph: mergeOpenGraph({
+    title: 'Art Collections | Leso Originals',
+    description:
+      'Explore our curated collections of unique artworks that showcase African culture and heritage.',
+    images: [
+      {
+        url: '/art1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Leso Originals Art Collections',
+      },
+    ],
+  }),
+}
 
 export default async function CollectionsPage() {
   const payload = await getPayload({ config })
@@ -33,11 +54,9 @@ export default async function CollectionsPage() {
 
       {/* Collections Grid */}
       <div className="container mx-auto px-4 py-20">
-        <div className="flex flex-wrap items-center justify-center gap-10 lg:gap-x-12 md:gap-y-16">
-          {collections.map((collection) => (
-            <CollectionCardParallax key={collection.id} collection={collection} />
-          ))}
-        </div>
+        {collections.map((collection, i) => (
+          <CollectionCardParallax key={i} collection={collection} />
+        ))}
       </div>
     </div>
   )

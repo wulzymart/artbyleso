@@ -13,7 +13,7 @@ const CollectionImageParallax = ({ bgImage }: { bgImage: Media }) => {
     <div className="max-w-sm w-full group/card overflow-hidden">
       <motion.div
         className={cn(
-          'cursor-pointer h-[500px] overflow-hidden relative card rounded-lg shadow-xl max-w-sm mx-auto flex flex-col justify-between p-4',
+          'h-[500px] overflow-hidden relative card rounded-lg shadow-xl max-w-sm mx-auto flex flex-col justify-between p-4',
           'bg-cover transform transition-all duration-500',
         )}
         whileHover={{ scale: 1.03 }}

@@ -2,6 +2,27 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+
+export const metadata: Metadata = {
+  title: 'Shipping Policy | Leso Originals',
+  description:
+    'Learn about our shipping process, delivery options, and policies for artwork purchases. We offer personalized shipping solutions for our customers worldwide.',
+  openGraph: mergeOpenGraph({
+    title: 'Shipping Policy | Leso Originals',
+    description:
+      'Learn about our shipping process, delivery options, and policies for artwork purchases.',
+    images: [
+      {
+        url: '/leso.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Leso Originals Shipping Policy',
+      },
+    ],
+  }),
+}
 
 export default function ShippingPolicy() {
   return (

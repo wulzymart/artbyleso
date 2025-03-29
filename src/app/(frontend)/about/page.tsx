@@ -1,4 +1,25 @@
 import Image from 'next/image'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+
+export const metadata: Metadata = {
+  title: 'About Oluwatosin Ayeleso | Leso Originals',
+  description:
+    'Learn about Oluwatosin Ayeleso, a multilateral contemporary artist from Nigeria known for vibrant and bold styles inspired by African culture and everyday life.',
+  openGraph: mergeOpenGraph({
+    title: 'About Oluwatosin Ayeleso | Leso Originals',
+    description:
+      'Learn about Oluwatosin Ayeleso, a multilateral contemporary artist from Nigeria known for vibrant and bold styles.',
+    images: [
+      {
+        url: '/leso.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Oluwatosin Ayeleso - Leso Originals',
+      },
+    ],
+  }),
+}
 
 export default function AboutPage() {
   return (

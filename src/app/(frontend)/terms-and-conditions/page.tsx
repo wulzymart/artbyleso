@@ -2,6 +2,27 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { Metadata } from 'next'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+
+export const metadata: Metadata = {
+  title: 'Terms and Conditions | Leso Originals',
+  description:
+    'Read our terms and conditions for using Leso Originals website and purchasing our artworks. Learn about our policies regarding content usage, purchases, and more.',
+  openGraph: mergeOpenGraph({
+    title: 'Terms and Conditions | Leso Originals',
+    description:
+      'Read our terms and conditions for using Leso Originals website and purchasing our artworks.',
+    images: [
+      {
+        url: '/leso.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Leso Originals Terms and Conditions',
+      },
+    ],
+  }),
+}
 
 export default function TermsAndConditions() {
   return (
