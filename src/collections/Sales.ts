@@ -1,5 +1,5 @@
 import { isAdminOrSuperAdmin } from '@/access/roleBasedAccess'
-import { CollectionConfig, GlobalConfig } from 'payload'
+import { GlobalConfig } from 'payload'
 
 export const Sales: GlobalConfig = {
   slug: 'sales',

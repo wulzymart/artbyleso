@@ -51,11 +51,11 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-5xl mx-auto">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold mb-6 text-amber-400">Let's Connect</h2>
+            <h2 className="text-3xl font-bold mb-6 text-amber-400">Let&lsquo;s Connect</h2>
             <p className="text-xl max-w-3xl mx-auto">
-              I'm available for partnerships, workshops, trainings, consultations, and mentorship.
-              Whether you're interested in my artwork, need guidance, or want to collaborate, I'd
-              love to hear from you.
+              I&lsquo;m available for partnerships, workshops, trainings, consultations, and
+              mentorship. Whether you&lsquo;re interested in my artwork, need guidance, or want to
+              collaborate, I&lsquo;d love to hear from you.
             </p>
           </div>
 

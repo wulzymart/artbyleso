@@ -1,5 +1,4 @@
 import { isAdminOrSelf } from '@/access/roleBasedAccess'
-import { redirect } from 'next/dist/server/api-utils'
 import { CollectionConfig } from 'payload'
 
 export const Payments: CollectionConfig = {
@@ -36,7 +35,7 @@ export const Payments: CollectionConfig = {
       name: 'paystackInfo',
       type: 'group',
       admin: {
-        condition: (data, siblingData, { user }) => {
+        condition: (data, siblingData) => {
           return siblingData?.gateway === 'paystack'
         },
       },

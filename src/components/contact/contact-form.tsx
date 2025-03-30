@@ -60,7 +60,7 @@ export function ContactForm() {
         message: 'Thank you for your message! I will get back to you soon.',
       })
       form.reset()
-    } catch (error) {
+    } catch {
       setFormStatus({
         type: 'error',
         message: 'Failed to send your message. Please try again later.',

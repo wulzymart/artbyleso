@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Portfolio } from '@/payload-types'
 import { Media } from '../Media'
 
@@ -12,8 +11,6 @@ const PortfoliosListParallax: React.FC<PortfoliosListParallaxProps> = ({ portfol
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {portfolios.map((portfolio) => {
-        console.log(portfolio)
-
         // Get the first image as the thumbnail if available
         const thumbnailImage =
           portfolio.images && portfolio.images.length > 0

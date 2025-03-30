@@ -1,8 +1,6 @@
 import Link from 'next/link'
-import { Instagram, Twitter, Linkedin, Mail, X } from 'lucide-react'
+import { Instagram, Linkedin, X } from 'lucide-react'
 import { Logo } from '@/components/Logo/Logo'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 
 export const Footer = () => {
   return (

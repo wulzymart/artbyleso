@@ -1,7 +1,6 @@
 import { Artwork } from '@/payload-types'
-import { Item } from '@radix-ui/react-select'
 import { createStore } from 'zustand/vanilla'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 import { toast } from 'sonner'
 import { getCurrentPrice } from '@/utilities/calc-price'
 export interface CartItem {

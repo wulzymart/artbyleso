@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { headers } from 'next/headers'
-import { Order } from '@/payload-types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -199,7 +198,7 @@ export default async function OrdersPage() {
         <div className="flex flex-col items-center justify-center py-12 gap-4">
           <Card className="w-full max-w-md p-8 text-center">
             <CardContent>
-              <p className="text-gray-500 mb-6">You haven't placed any orders yet.</p>
+              <p className="text-gray-500 mb-6">You haven&lsquo;t placed any orders yet.</p>
               <div className="space-y-4">
                 <Link href="/collections">
                   <Button className="w-full bg-amber-600 hover:bg-amber-800">

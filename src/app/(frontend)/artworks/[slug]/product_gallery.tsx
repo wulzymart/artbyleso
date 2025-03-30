@@ -4,6 +4,7 @@ import { Media as MediaComponent } from '@/components/Media'
 import { Media } from '@/payload-types'
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 interface ImageGalleryProps {
   images: Media[]
@@ -56,13 +57,18 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
       {/* Thumbnail Gallery */}
       <div className="flex mt-4 gap-2 overflow-x-auto">
         {images.map((img, index) => (
-          <img
+          <div
             key={index}
-            src={img.thumbnailURL!}
-            alt={`Thumbnail ${index + 1}`}
-            className={`w-20 h-20 object-cover rounded cursor-pointer ${index === currentImage ? 'ring-2 ring-indigo-500' : ''}`}
-            onClick={() => setCurrentImage(index)}
-          />
+            className={`w-20 h-20 relative rounded cursor-pointer ${index === currentImage ? 'ring-2 ring-indigo-500' : ''}`}
+          >
+            <Image
+              key={index}
+              src={img.thumbnailURL!}
+              alt={`Thumbnail ${index + 1}`}
+              onClick={() => setCurrentImage(index)}
+              fill
+            />
+          </div>
         ))}
       </div>
     </div>

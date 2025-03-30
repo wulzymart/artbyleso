@@ -2,7 +2,6 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { getPayload } from 'payload'
@@ -64,13 +63,13 @@ export default async function PortfolioPage({ params }: Props) {
 
   if (!portfolio) return notFound()
 
-  // Get the first image for the hero background if available
-  const heroImage =
-    portfolio.images && portfolio.images.length > 0
-      ? typeof portfolio.images[0]?.image === 'object' && portfolio.images[0].image.url
-        ? portfolio.images[0].image.url
-        : '/art2.jpg' // Fallback image
-      : '/art2.jpg' // Fallback image
+  // // Get the first image for the hero background if available
+  // const heroImage =
+  //   portfolio.images && portfolio.images.length > 0
+  //     ? typeof portfolio.images[0]?.image === 'object' && portfolio.images[0].image.url
+  //       ? portfolio.images[0].image.url
+  //       : '/art2.jpg' // Fallback image
+  //     : '/art2.jpg' // Fallback image
 
   return (
     <div className="min-h-screen text-gray-600">

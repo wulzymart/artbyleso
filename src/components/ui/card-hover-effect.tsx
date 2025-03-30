@@ -15,7 +15,7 @@ export const HoverEffect = ({
   }[]
   className?: string
 }) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   return (
     <div className={cn('flex flex-wrap items-center justify-center gap-8 py-10 w-full', className)}>
       {items.map((item, idx) => {

@@ -1,5 +1,4 @@
 import { Artwork } from '@/payload-types'
-import { number } from 'zod'
 
 export const calculateDiscount = (price: number, discountedPrice?: number | null) => {
   if (price && discountedPrice) {

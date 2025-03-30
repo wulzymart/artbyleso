@@ -31,7 +31,7 @@ const Orders: CollectionConfig = {
     // Only admins can delete carts
     delete: isAdminOrSelf,
     // Cart creation is handled internally
-    create: ({ req }) => {
+    create: () => {
       return false
     },
   },

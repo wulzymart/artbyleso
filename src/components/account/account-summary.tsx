@@ -1,30 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Customer, Order } from '@/payload-types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '../ui/button'
 import { useAuth } from '@/context/authContext'
 import { SheetClose } from '../ui/sheet'
+import { Order } from '@/payload-types'
 
 const AccountSummary = () => {
   const { logout, user } = useAuth()
   const customer = user
-    ? {
-        id: user.id,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phoneNumber: user.phoneNumber || '',
-        address: {
-          address: user.address?.address || '',
-          city: user.address?.city || '',
-          state: user.address?.state || '',
-          country: user.address?.country || '',
-          postalCode: user.address?.postalCode || '',
-        },
-      }
-    : null
+
   const [orders, setOrders] = useState<Order[]>([])
   const [isLoading, setIsLoading] = useState(false)
 

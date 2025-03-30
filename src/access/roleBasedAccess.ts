@@ -1,5 +1,4 @@
 import { Access, FieldAccess } from 'payload'
-import type { User } from '@/payload-types'
 
 // Check if user is a Super Admin
 export const isSuperAdmin: Access = ({ req: { user } }) => {

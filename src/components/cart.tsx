@@ -11,7 +11,7 @@ import { SheetClose } from './ui/sheet'
 import { useSales } from '@/context/sales_checker'
 import { getCurrentPrice } from '@/utilities/calc-price'
 export const Cart = () => {
-  const { items, removeItem, getCount, clearCart, getCartTotal } = useCartStore((state) => state)
+  const { items, removeItem, getCount, getCartTotal } = useCartStore((state) => state)
   const { salesPercentage } = useSales()
   const count = getCount()
   const cartTotal = getCartTotal(salesPercentage)

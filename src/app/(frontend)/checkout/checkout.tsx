@@ -1,25 +1,22 @@
 'use client'
-
-import React, { startTransition, useState } from 'react'
+ 
+import React, { useState } from 'react'
 import { Media } from '@/components/Media'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, ArrowRight, CreditCard, Trash2Icon } from 'lucide-react'
+import { Trash2Icon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
 import { useCartStore } from '@/context/CartProvider'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { closePaymentModal, useFlutterwave } from 'flutterwave-react-v3'
-import { FlutterwaveConfig, InitializeFlutterwavePayment } from 'flutterwave-react-v3/dist/types'
-import { PaystackButton } from 'react-paystack'
+// import { closePaymentModal, useFlutterwave } from 'flutterwave-react-v3'
+// import { FlutterwaveConfig, InitializeFlutterwavePayment } from 'flutterwave-react-v3/dist/types'
 import { usePaystackPayment } from 'react-paystack'
 import { useSales } from '@/context/sales_checker'
 import { getCurrentPrice } from '@/utilities/calc-price'
-import { c } from 'node_modules/framer-motion/dist/types.d-6pKw1mTI'
 import { addOrUpdatePaymentInfo, checkItemsAvailability, createOrder } from './actions'
-import { Order, Payment } from '@/payload-types'
-import { get } from 'http'
+import { Payment } from '@/payload-types'
 
 const CheckOut = () => {
   const { items, removeItem, getCount, clearCart, getCartTotal } = useCartStore((state) => state)
@@ -29,17 +26,9 @@ const CheckOut = () => {
   const { isAuthenticated, user } = useAuth()
 
   const router = useRouter()
-  if (!isAuthenticated) {
-    router.push('/account/login')
-  }
+
   const [isProcessing, setIsProcessing] = useState(false)
-  if (!isAuthenticated || !user) {
-    return null
-  }
-  const handlePaystackSuccessAction = (reference: any) => {
-    // Implementation for whatever you want to do with reference and after success call.
-    console.log(reference)
-  }
+
   const handleCloseAction = () => {
     // implementation for  whatever you want to do when the Paystack dialog closed.
     setIsProcessing(false)
@@ -48,12 +37,12 @@ const CheckOut = () => {
 
   const initializePayment = usePaystackPayment({
     currency: 'NGN',
-    reference: new Date().getTime().toString() + user.id,
-    firstname: user.firstName,
-    lastname: user.lastName,
+    reference: new Date().getTime().toString() + user?.id,
+    firstname: user!.firstName,
+    lastname: user!.lastName,
     label: 'Leso Originals',
-    phone: user.phoneNumber!,
-    email: user.email,
+    phone: user!.phoneNumber!,
+    email: user!.email,
     onBankTransferConfirmationPending: (reference: any) => {
       console.log(reference)
     },
@@ -62,25 +51,24 @@ const CheckOut = () => {
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
   })
 
-  const flutterWaveConfig: FlutterwaveConfig = {
-    public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
-    tx_ref: new Date().getTime().toString() + user.id,
-    currency: 'NGN',
-    amount: cartTotal,
-    payment_options: 'card,mobilemoney,ussd',
-    customer: {
-      email: user.email,
-      phone_number: user.phoneNumber!,
-      name: `${user.firstName} ${user.lastName}`,
-    },
-    customizations: {
-      title: 'Leso Originals',
-      description: 'Payment for artworks in cart',
-      logo: '/logo.png',
-    },
-  }
+  // const flutterWaveConfig: FlutterwaveConfig = {
+  //   public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
+  //   tx_ref: new Date().getTime().toString() + user?.id,
+  //   currency: 'NGN',
+  //   amount: cartTotal,
+  //   payment_options: 'card,mobilemoney,ussd',
+  //   customer: {
+  //     email: user?.email,
+  //     phone_number: user?.phoneNumber!,
+  //     name: `${user?.firstName} ${user?.lastName}`,
+  //   },
+  //   customizations: {
+  //     title: 'Leso Originals',
+  //     description: 'Payment for artworks in cart',
+  //     logo: '/logo.png',
+  //   },
+  // }
 
-  const handleFlutterPayment = useFlutterwave(flutterWaveConfig)
   const generatePaymentInfo = (gateway: 'paystack' | 'flutterwave', info: any) => {
     const paymentInfo: Omit<Payment, 'id' | 'createdAt' | 'updatedAt' | 'order' | 'customer'> = {
       amount: cartTotal,
@@ -89,70 +77,8 @@ const CheckOut = () => {
     }
     return paymentInfo
   }
-  const checkOut = async (gateway: 'paystack' | 'flutterwave') => {
-    if (isAuthenticated) {
-      const { unavailableItemIds } = await checkItemsAvailability(items)
-      if (unavailableItemIds.length > 0) {
-        items.forEach((item) => {
-          if (unavailableItemIds.includes(item.id)) {
-            removeItem(item.id)
-          }
-        })
-        toast.error('Some items are no longer available and we have removed them from your cart.')
-        return
-      }
-
-      setIsProcessing(true)
-
-      const order = await createOrder({
-        customer: user.id,
-        items: items.map((item) => {
-          const { discountedPrice, originalPrice } = getCurrentPrice(
-            item.artwork,
-            item.isPrintVersion,
-            salesPercentage,
-          )
-          return {
-            artwork: item.artwork.id,
-            version: item.isPrintVersion ? 'Print' : 'Canvas',
-            price: discountedPrice || originalPrice,
-          }
-        }),
-        total: cartTotal,
-        paymentStatus: 'pending',
-        shippingAddress: user.address,
-      })
-      if (gateway === 'paystack') {
-        initializePayment({
-          onSuccess: async (reference: any) => {
-            const paymentInfo = generatePaymentInfo('paystack', reference)
-            const newPayment = await addOrUpdatePaymentInfo(
-              order.id,
-              paymentInfo,
-              reference.status === 'success',
-            )
-            if (newPayment) {
-              setIsProcessing(false)
-              toast.success('Payment successful')
-              clearCart()
-              router.push(`/orders/${order.id}`)
-            }
-          },
-          onClose: handleCloseAction,
-        })
-      } else if (gateway === 'flutterwave') {
-        handleFlutterPayment({
-          callback: (response) => {
-            console.log(response)
-            closePaymentModal()
-          },
-          onClose: () => {
-            setIsProcessing(false)
-            toast('Payment process cancelled')
-          },
-        })
-      }
-    } else {
+  const checkLogin = () => {
+    if (!isAuthenticated) {
       toast('Please login to checkout', {
         description: 'Please login to checkout',
         className: 'bg-red-500',
@@ -160,6 +86,60 @@ const CheckOut = () => {
       })
       router.push('/account/login')
     }
+  }
+
+  const checkOutPayStack = async () => {
+    checkLogin()
+
+    const { unavailableItemIds } = await checkItemsAvailability(items)
+    if (unavailableItemIds.length > 0) {
+      items.forEach((item) => {
+        if (unavailableItemIds.includes(item.id)) {
+          removeItem(item.id)
+        }
+      })
+      toast.error('Some items are no longer available and we have removed them from your cart.')
+      return
+    }
+
+    setIsProcessing(true)
+
+    const order = await createOrder({
+      customer: user!.id,
+      items: items.map((item) => {
+        const { discountedPrice, originalPrice } = getCurrentPrice(
+          item.artwork,
+          item.isPrintVersion,
+          salesPercentage,
+        )
+        return {
+          artwork: item.artwork.id,
+          version: item.isPrintVersion ? 'Print' : 'Canvas',
+          price: discountedPrice || originalPrice,
+        }
+      }),
+      total: cartTotal,
+      paymentStatus: 'pending',
+      shippingAddress: user!.address,
+    })
+
+    initializePayment({
+      onSuccess: async (reference: any) => {
+        const paymentInfo = generatePaymentInfo('paystack', reference)
+        const newPayment = await addOrUpdatePaymentInfo(
+          order.id,
+          paymentInfo,
+          reference.status === 'success',
+        )
+        if (newPayment) {
+          setIsProcessing(false)
+          toast.success('Payment successful')
+          clearCart()
+          router.push(`/orders/${order.id}`)
+        }
+      },
+      onClose: handleCloseAction,
+    })
   }
   return (
     <div className="container mx-auto my-8">
@@ -254,14 +234,14 @@ const CheckOut = () => {
           <>
             <Button
               className="bg-primary hover:bg-amber-600 text-white"
-              onClick={() => checkOut('paystack')}
+              onClick={checkOutPayStack}
               disabled={isProcessing}
             >
               {isProcessing ? 'Processing...' : 'Pay with Paystack'}
             </Button>
             {/* <Button
-              className="bg-amber-500 hover:bg-amber-600 text-white"
-              onClick={() => checkOut('flutterwave')}
+              className="bg-amber-500 hover:bg-amber-600 text-white hidden"
+              onClick={checkOutFlutterwave}
               disabled={isProcessing}
             >
               {isProcessing ? 'Processing...' : 'Pay with Flutterwave'}

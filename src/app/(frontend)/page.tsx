@@ -1,7 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import HeroParallax from '@/components/home-components/hero-parallax'
 import AboutParallax from '@/components/home-components/about-parallax'
 import FeaturesParallax from '@/components/home-components/features-parallax'
 import Slider from '@/components/home-components/hero-slider/slider'

@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import AddToCartButton from '@/components/works/add-to-cart-button'
-import { useCartStore } from '@/context/CartProvider'
 import { Artwork } from '@/payload-types'
 import React from 'react'
 
@@ -17,13 +16,7 @@ const ActionButton: React.FC<AddToCartButtonProps> = ({
   artwork,
   isPrintVersion = false,
 }) => {
-  // Calculate the correct price based on whether print version is selected
-  const getPrice = () => {
-    if (isPrintVersion && artwork.printVersion) {
-      return artwork.printVersion.discountedPrice || artwork.printVersion.price || 0
-    }
-    return (artwork.discountedPrice || artwork.originalPrice)!
-  }
+  // Price calculation is handled by the cart system
 
   return (
     <div className="mt-8">
@@ -31,14 +24,12 @@ const ActionButton: React.FC<AddToCartButtonProps> = ({
         <AddToCartButton
           className="mt-4 bg-amber-500 hover:bg-amber-600"
           artwork={artwork}
-          price={getPrice()}
           isPrintVersion={isPrintVersion}
         />
       ) : artwork.printVersion?.available ? (
         <AddToCartButton
           className="mt-4 bg-amber-500 hover:bg-amber-600"
           artwork={artwork}
-          price={getPrice()}
           isPrintVersion={true}
           text="Get Print Version"
         />

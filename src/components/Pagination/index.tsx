@@ -9,7 +9,6 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { cn } from '@/utilities/ui'
-import { useRouter } from 'next/navigation'
 import React from 'react'
 
 export const Pagination: React.FC<{
@@ -18,8 +17,6 @@ export const Pagination: React.FC<{
   totalPages: number
   url: string
 }> = (props) => {
-  const router = useRouter()
-
   const { className, page, totalPages, url } = props
   const hasNextPage = page < totalPages
   const hasPrevPage = page > 1

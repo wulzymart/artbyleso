@@ -1,4 +1,4 @@
-import { CollectionConfig, PayloadRequest } from 'payload'
+import { CollectionConfig } from 'payload'
 import {
   isAdminOrSuperAdmin,
   isSuperAdmin,
@@ -6,7 +6,6 @@ import {
   canManageAllUsers,
   isSuperAdminField,
 } from '@/access/roleBasedAccess'
-import { email } from 'node_modules/payload/dist/fields/validations'
 
 export const Users: CollectionConfig = {
   slug: 'users',

@@ -1,10 +1,8 @@
-import Link from 'next/link'
 import { Metadata } from 'next'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { Button } from '@/components/ui/button'
+
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { Media } from '@/components/Media'
 import {
   Pagination,
   PaginationContent,
@@ -35,10 +33,9 @@ export const metadata: Metadata = {
   }),
 }
 type Args = {
-  params: Promise<{}>
   searchParams: Promise<{ page?: string }>
 }
-export default async function ArtworksPage({ params, searchParams }: Args) {
+export default async function ArtworksPage({ searchParams }: Args) {
   const payload = await getPayload({ config })
   const { page: currentPage } = await searchParams
   const {

@@ -4,7 +4,6 @@ import config from '@/payload.config'
 import { CartItem } from '@/stores/cart-store'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { version } from 'os'
 import { getPayload } from 'payload'
 
 export async function checkItemsAvailability(items: CartItem[]) {
@@ -22,10 +21,10 @@ export async function checkItemsAvailability(items: CartItem[]) {
         return false
       }
       if (item.isPrintVersion) {
-        !Boolean(artwork.printVersion?.available) && unavailableItemIds.push(item.id)
+        if (!Boolean(artwork.printVersion?.available)) unavailableItemIds.push(item.id)
         return Boolean(artwork.printVersion?.available)
       }
-      !Boolean(artwork.inStock) && unavailableItemIds.push(item.id)
+      if (!Boolean(artwork.inStock)) unavailableItemIds.push(item.id)
       return Boolean(artwork.inStock)
     }),
   )
@@ -61,14 +60,14 @@ export async function addOrUpdatePaymentInfo(
   async function updateOrderArtworks(order: Order) {
     await Promise.all(
       order.items.map(async (item) => {
-        item.version === 'Canvas' &&
-          (await payload.update({
+        if (item.version === 'Canvas')
+          await payload.update({
             collection: 'artworks',
             id: typeof item.artwork === 'string' ? item.artwork : item.artwork.id,
             data: {
               inStock: false,
             },
-          }))
+          })
       }),
     )
   }
@@ -114,7 +113,7 @@ export async function addOrUpdatePaymentInfo(
           paymentStatus: success ? 'paid' : 'pending',
         },
       })
-      success && (await updateOrderArtworks(order))
+      if (success) await updateOrderArtworks(order)
       return newPayment
     }
   } catch (error) {

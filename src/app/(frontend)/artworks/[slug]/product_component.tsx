@@ -7,18 +7,10 @@ import ImageGallery from './product_gallery'
 import ActionButton from './action_buttons'
 import { useSales } from '@/context/sales_checker'
 import { getCurrentPrice } from '@/utilities/calc-price'
-import { a } from 'node_modules/framer-motion/dist/types.d-6pKw1mTI'
 import Link from 'next/link'
 
 const ArtworkProduct = ({ artwork }: { artwork: Artwork }) => {
-  const {
-    mainImage,
-    additionalImages,
-    description,
-    title,
-
-    inStock,
-  } = artwork
+  const { mainImage, additionalImages, inStock } = artwork
   const imgs = [mainImage, ...(additionalImages || [])].map((img) => {
     if (!img || !(typeof img === 'object')) throw new Error('Invalid image')
     return img

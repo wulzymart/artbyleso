@@ -2,27 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Metadata } from 'next'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-
-export const metadata: Metadata = {
-  title: 'Shipping Policy | Leso Originals',
-  description:
-    'Learn about our shipping process, delivery options, and policies for artwork purchases. We offer personalized shipping solutions for our customers worldwide.',
-  openGraph: mergeOpenGraph({
-    title: 'Shipping Policy | Leso Originals',
-    description:
-      'Learn about our shipping process, delivery options, and policies for artwork purchases.',
-    images: [
-      {
-        url: '/leso.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Leso Originals Shipping Policy',
-      },
-    ],
-  }),
-}
 
 export default function ShippingPolicy() {
   return (
@@ -99,9 +78,9 @@ export default function ShippingPolicy() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">Contact Information</h2>
             <p className="mb-4">
-              If you have any questions about shipping or delivery, please don't hesitate to contact
-              us through our contact page. We're here to help ensure a smooth delivery process for
-              your purchase.
+              If you have any questions about shipping or delivery, please don&lsquo;t hesitate to
+              contact us through our contact page. We&lsquo;re here to help ensure a smooth delivery
+              process for your purchase.
             </p>
           </section>
         </div>

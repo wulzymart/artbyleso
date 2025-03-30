@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { Customer } from '@/payload-types'
 import { toast } from 'sonner'
 import { getCurrentCustomer, loginCustomer, logoutCustomer } from '@/context/helper/actions/login'
-import { set } from 'zod'
 
 interface UseAuthReturn {
   user: Customer | null
@@ -42,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user)
       setIsAuthenticated(true)
       setLoading(false)
-    } catch (err) {
+    } catch {
       setUser(null)
     } finally {
       setLoading(false)
@@ -50,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Login function
-  const login = async (email: string, password: string, collection: string = 'customers') => {
+  const login = async (email: string, password: string) => {
     setLoading(true)
     setError(null)
     startTransition(async () => {
@@ -60,9 +59,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsAuthenticated(true)
         toast.success('Logged in successfully')
         router.push('/')
-      } catch (err: any) {
-        setError(err.message)
-        toast.error(err.message)
+      } catch (err: unknown) {
+        setError((err as { message: string }).message)
+        toast.error((err as { message: string }).message)
       } finally {
         setLoading(false)
       }

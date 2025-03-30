@@ -2,27 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Metadata } from 'next'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Leso Originals',
-  description:
-    'Learn about how Leso Originals collects, uses, and protects your personal information. Our privacy policy outlines our commitment to your data security.',
-  openGraph: mergeOpenGraph({
-    title: 'Privacy Policy | Leso Originals',
-    description:
-      'Learn about how Leso Originals collects, uses, and protects your personal information.',
-    images: [
-      {
-        url: '/leso.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Leso Originals Privacy Policy',
-      },
-    ],
-  }),
-}
 
 export default function PrivacyPolicy() {
   return (

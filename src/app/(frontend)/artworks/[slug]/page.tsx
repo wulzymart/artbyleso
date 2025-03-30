@@ -27,15 +27,7 @@ const ArtworkProductPage: React.FC<Args> = async ({ params }) => {
     },
   })
   if (!artwork) throw notFound()
-  const {
-    mainImage,
-    additionalImages,
-    description,
-    title,
-    originalPrice,
-    discountedPrice,
-    inStock,
-  } = artwork
+  const { mainImage, additionalImages, description, title } = artwork
   const imgs = [mainImage, ...(additionalImages || [])].map((img) => {
     if (!img || !(typeof img === 'object')) throw new Error('Invalid image')
     return img

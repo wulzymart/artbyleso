@@ -7,11 +7,7 @@ import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
-import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
-import { getServerSideURL } from './utilities/getURL'
 import { Collections } from './collections/collections'
 import { Artworks } from './collections/Artworks'
 import Orders from './collections/Orders'
@@ -78,10 +74,9 @@ export default buildConfig({
     Shipments,
     Portfolios,
   ],
-  cors: [getServerSideURL()].filter(Boolean),
+  cors: '*',
   globals: [Sales],
   plugins: [
-    ...plugins,
     // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET,

@@ -5,16 +5,7 @@ import { Menu, X, Search, User, ShoppingCart } from 'lucide-react'
 import { Logo } from '../Logo/Logo'
 import { usePathname } from 'next/navigation'
 import { Button } from '../ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import AccountAccess from '../account/accout_access'
 import { useCartStore } from '@/context/CartProvider'
 import { Cart } from '../cart'

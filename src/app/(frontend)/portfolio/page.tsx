@@ -1,6 +1,5 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { Portfolio } from '@/payload-types'
 import PortfoliosListParallax from '@/components/works/portfolios-list-parallax'
 import { Pagination } from '@/components/Pagination'
 import { getPayload } from 'payload'
@@ -14,9 +13,10 @@ export const metadata: Metadata = {
 export default async function PortfoliosPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ page: string }>
 }) {
-  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
+  const page =
+    typeof (await searchParams).page === 'string' ? parseInt((await searchParams).page) : 1
   const limit = 10 // 10 portfolios per page as required
   const payload = await getPayload({ config })
   const portfoliosQuery = await payload.find({
@@ -27,7 +27,7 @@ export default async function PortfoliosPage({
     depth: 4,
   })
 
-  const { docs: portfolios, totalPages, totalDocs } = portfoliosQuery
+  const { docs: portfolios, totalPages } = portfoliosQuery
 
   return (
     <div className="container mx-auto py-12">

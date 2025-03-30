@@ -3,7 +3,6 @@
 import { Artwork } from '@/payload-types'
 import React from 'react'
 import { Media as MediaComponent } from '../Media'
-import { Button } from '../ui/button'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import AddToCartButton from './add-to-cart-button'

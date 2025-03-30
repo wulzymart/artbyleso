@@ -1,8 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { redirect, useRouter } from 'next/navigation'
-import { useAuth } from '@/context/authContext'
-import { Customer, Order } from '@/payload-types'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -190,7 +188,7 @@ export default async function AccountPage() {
               </Table>
             ) : (
               <div className="flex flex-col items-center justify-center h-full gap-4">
-                <p className="text-gray-500 mb-4">You haven't placed any orders yet.</p>
+                <p className="text-gray-500 mb-4">You haven&lsquo;t placed any orders yet.</p>
                 <Link href="/collections">
                   <Button className="bg-amber-600 hover:bg-amber-800">Browse Collections</Button>
                 </Link>

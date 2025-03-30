@@ -9,51 +9,50 @@ const getPagesSitemap = unstable_cache(
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
       process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
-
-    const results = await payload.find({
-      collection: 'pages',
-      overrideAccess: false,
-      draft: false,
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      where: {
-        _status: {
-          equals: 'published',
-        },
-      },
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    })
+      'https://lesooriginals.com.ng'
 
     const dateFallback = new Date().toISOString()
 
     const defaultSitemap = [
       {
-        loc: `${SITE_URL}/search`,
+        loc: `${SITE_URL}/artworks`,
         lastmod: dateFallback,
       },
       {
-        loc: `${SITE_URL}/posts`,
+        loc: `${SITE_URL}/collections`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/about`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/contact`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/portfolio`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/shipping-policy`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/privacy-policy`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/terms-and-conditions`,
         lastmod: dateFallback,
       },
     ]
 
-    const sitemap = results.docs
-      ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
-      : []
-
-    return [...defaultSitemap, ...sitemap]
+    return [...defaultSitemap]
   },
   ['pages-sitemap'],
   {

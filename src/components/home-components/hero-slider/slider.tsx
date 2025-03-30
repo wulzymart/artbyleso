@@ -8,8 +8,6 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import { sliderData } from './slider-data'
-import { Slide } from './slide'
-import { ParallaxSection } from '@/components/ui/parallax-section'
 import HeroParallax from '../hero-parallax'
 const Slider = () => {
   return (

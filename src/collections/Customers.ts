@@ -6,9 +6,6 @@ import {
   canManageCustomers,
   canMarkAsDeleted,
 } from '@/access/roleBasedAccess'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { email } from 'node_modules/payload/dist/fields/validations'
 
 const Customers: CollectionConfig = {
   slug: 'customers',

@@ -19,22 +19,19 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import Link from 'next/link'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import signupCustomer from '../../context/helper/actions/signup'
-import { isValidPhoneNumber } from 'react-phone-number-input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Country, State, City } from 'country-state-city'
 import { ICountry, IState, ICity } from 'country-state-city'
 import { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { SheetClose } from '../ui/sheet'
+import { isValidPhoneNumber } from 'react-phone-number-input'
 export function SignUpForm({
   className,
   inPage,
@@ -116,12 +113,12 @@ export function SignUpForm({
     }
   }, [state])
   const onSubmit = async (values: z.infer<typeof zodSchema>) => {
-    const { confirmPassword, ...rest } = values
+    const { ...rest } = values
     try {
       const user = await signupCustomer(rest)
       toast.success(`Thanks for signing up ${user.firstName}`)
       router.push(`/account/verification?name=${user.firstName}&email=${user.email}`)
-    } catch (error) {
+    } catch {
       toast.error('Failed to sign up')
     }
   }

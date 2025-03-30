@@ -68,9 +68,9 @@ export default function AboutPage() {
           <div className="space-y-8 prose prose-lg prose-invert max-w-none">
             <div className="bg-black/20 p-6 rounded-lg border-l-4 border-amber-500">
               <p className="text-lg leading-relaxed italic">
-                "My art is inspired by the economy effect and influence on people, my everyday life
-                & African culture. I believe that creativity is a gift given to us by God, which in
-                return must be nurtured and practised."
+                &quot;My art is inspired by the economy effect and influence on people, my everyday
+                life & African culture. I believe that creativity is a gift given to us by God,
+                which in return must be nurtured and practised.&quot;
               </p>
             </div>
 
@@ -113,8 +113,8 @@ export default function AboutPage() {
 
             <div className="mt-12 text-center">
               <p className="text-2xl font-light italic text-amber-400">
-                "Through my art, I hope to share with you a journey of self-exploration, progression
-                & acceptance."
+                &quot;Through my art, I hope to share with you a journey of self-exploration,
+                progression & acceptance.&quot;
               </p>
             </div>
           </div>
