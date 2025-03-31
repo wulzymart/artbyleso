@@ -46,10 +46,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 
 export const metadata: Metadata = {
+  title: {
+    default: 'Leso Originals',
+    template: '%s | Leso Originals',
+  },
+  description: 'A portfolio website for Oluwatosin Ayeleso, A contemporary artist',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'https://lesooriginals.com'),
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@payloadcms',
+    creator: 'Olawole Olawale Martins',
   },
 }
